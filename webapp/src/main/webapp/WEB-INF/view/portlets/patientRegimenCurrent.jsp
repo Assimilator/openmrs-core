@@ -12,10 +12,9 @@
 				<thead>
 					<tr class="regimenCurrentHeaderRow">
 						<th style="nowrap: true;" class="regimenCurrentDrugOrderedHeader"> <openmrs:message code="Order.item.ordered" /> </th>
-						<th class="regimenCurrentDrugDoseHeader"> <openmrs:message code="DrugOrder.dose"/>/<openmrs:message code="DrugOrder.units"/> </th>
+						<th class="regimenCurrentDrugDoseHeader"> Duration </th>
 						<th class="regimenCurrentDrugFrequencyHeader"> <openmrs:message code="DrugOrder.frequency"/> </th>
 						<th class="regimenCurrentDrugDateStartHeader"> <openmrs:message code="general.dateStart"/> </th>
-						<th class="regimenCurrentDrugScheduledStopDateHeader"> <openmrs:message code="DrugOrder.scheduledStopDate"/> </th>
 						<th class="regimenCurrentDrugInstructionsHeader"> <openmrs:message code="general.instructions" /> </th>
 						<c:if test="${model.currentRegimenMode != 'view'}">
 							<th class="regimenCurrentEmptyHeader"> </th>
@@ -51,10 +50,9 @@
 										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
 									</c:if>
 								</td>
-								<td class="regimenCurrentDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
+								<td class="regimenCurrentDrugDoseData"> ${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
 								<td class="regimenCurrentDrugStartDateData"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="regimenCurrentDrugAutoExpireDateData"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
 								<td class="regimenCurrentDrugInstructionsData">${drugOrder.instructions}</td>
 								<c:if test="${model.currentRegimenMode != 'view'}">
 									<td class="regimenCurrentDrugDiscontinuedData">
@@ -176,7 +174,7 @@
 								<td class="regimenCurrentDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
 								<td class="regimenCurrentDrugStartDateData"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="regimenCurrentDrugAutoExpireDateData"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
+								<td class="regimenCurrentDrugAutoExpireDateData">${drugOrder.duration}</td>
 								<td  class="regimenCurrentDrugInstructionsData">${drugOrder.instructions}</td>
 								<c:if test="${model.currentRegimenMode != 'view'}">
 									<td class="regimenCurrentDrugDiscontinuedData">
@@ -247,7 +245,7 @@
 								<td class="regimenCurrentDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
 								<td class="regimenCurrentDrugStartDateData"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="regimenCurrentDrugAutoExpireDateData"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
+								<td class="regimenCurrentDrugAutoExpireDateData">${drugOrder.duration}</td>
 								<td class="regimenCurrentDrugInstructionsData">${drugOrder.instructions}</td>
 								<c:if test="${model.currentRegimenMode != 'view'}">
 									<td class="regimenCurrentDrugDiscontinuedData">

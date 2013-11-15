@@ -15,7 +15,7 @@
 						<th class="regimenCompletedDrugDoseHeader"> <openmrs:message code="DrugOrder.dose"/>/<openmrs:message code="DrugOrder.units"/> </th>
 						<th class="regimenCompletedDrugFrequencyHeader"> <openmrs:message code="DrugOrder.frequency"/> </th>
 						<th class="regimenCompletedDrugDateStartHeader"> <openmrs:message code="general.dateStart"/> </th>
-						<th class="regimenCompletedDrugScheduledStopDateHeader"> <openmrs:message code="DrugOrder.scheduledStopDate"/> </th>
+						<th class="regimenCompletedDrugScheduledStopDateHeader"> Duration </th>
 						<th class="regimenCompletedDrugActualStopDateHeader"> <openmrs:message code="DrugOrder.actualStopDate"/> </th>
 						<th class="regimenCompletedDrugInstructionHeader"> <openmrs:message code="general.instructions" /> </th>
 						<th class="regimenCompletedDrugDiscontinuedReasonHeader"> <openmrs:message code="general.discontinuedReason" /> </th>
@@ -55,7 +55,7 @@
 								<td class="regimenCompletedOtherDrugOrder" >${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCompletedOtherDrugFrequency">${drugOrder.frequency}</td>
 								<td class="regimenCompletedOtherStartDate"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="regimenCompletedOtherAutoExpireDate"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
+								<td class="regimenCompletedOtherAutoExpireDate">${drugOrder.duration}</td>
 								<td class="regimenCompletedOtherDiscontinuedDate"><openmrs:formatDate date="${drugOrder.discontinuedDate}" type="medium" /></td>
 								<td class="regimenCompletedOtherInstructions">${drugOrder.instructions}</td>
 								<td class="regimenCompletedOtherDiscontinuedReason">
@@ -133,7 +133,7 @@
 								<td class="patientRegimenDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="patientRegimenDrugFrequencyData">${drugOrder.frequency}</td>
 								<td class="patientRegimenDrugStartDateData"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="patientRegimenDrugAutoExpireDateData"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
+								<td class="patientRegimenDrugAutoExpireDateData">${drugOrder.duration}</td>
 								<td class="patientRegimenDrugDiscontinuedDateData"><openmrs:formatDate date="${drugOrder.discontinuedDate}" type="medium" /></td>
 								<td class="patientRegimenDrugInstrucionData">${drugOrder.instructions}</td>
 								<td class="patientRegimenDrugDiscontinuedReasonData">
@@ -195,7 +195,7 @@
 								<td class="patientRegimenDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="patientRegimenDrugFrequencyData">${drugOrder.frequency}</td>
 								<td class="patientRegimenDrugStartDateData"><openmrs:formatDate date="${drugOrder.startDate}" type="medium" /></td>
-								<td class="patientRegimenDrugAutoExpireDateData"><openmrs:formatDate date="${drugOrder.autoExpireDate}" type="medium" /></td>
+								<td class="patientRegimenDrugAutoExpireDateData">${drugOrder.duration}</td>
 								<td class="patientRegimenDrugDiscontinuedDateData"><openmrs:formatDate date="${drugOrder.discontinuedDate}" type="medium" /></td>
 								<td class="patientRegimenDrugInstrucionData">${drugOrder.instructions}</td>
 								<td class="patientRegimenDrugDiscontinuedReasonData">

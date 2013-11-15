@@ -40,6 +40,8 @@ public class DrugOrder extends Order implements java.io.Serializable {
 	
 	private Drug drug;
 	
+	private String duration;
+	
 	// Constructors
 	
 	/** default constructor */
@@ -62,11 +64,15 @@ public class DrugOrder extends Order implements java.io.Serializable {
 	 * @see org.openmrs.Order#copyHelper(Order)
 	 */
 	protected DrugOrder copyHelper(DrugOrder target) {
+		
+		////TODO: Use "complex" instead
+		
 		super.copyHelper(target);
 		target.dose = getDose();
 		target.equivalentDailyDose = getEquivalentDailyDose();
 		target.units = getUnits();
 		target.frequency = getFrequency();
+		target.duration = getDuration();
 		target.prn = getPrn();
 		target.complex = getComplex();
 		target.quantity = getQuantity();
@@ -114,6 +120,19 @@ public class DrugOrder extends Order implements java.io.Serializable {
 	 */
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
+	}
+	
+	public String getDuration() {
+		return this.duration;
+	}
+	
+	/**
+	 * Sets the frequency
+	 * 
+	 * @param frequency
+	 */
+	public void setDuration(String duration) {
+		this.duration = duration;
 	}
 	
 	/**

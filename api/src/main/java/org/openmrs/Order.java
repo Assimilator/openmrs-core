@@ -58,6 +58,8 @@ public class Order extends BaseOpenmrsData implements java.io.Serializable {
 	
 	private Date startDate;
 	
+	private Date endDate;
+	
 	private Date autoExpireDate;
 	
 	private Encounter encounter;
@@ -319,6 +321,14 @@ public class Order extends BaseOpenmrsData implements java.io.Serializable {
 	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+	public Date getEndDate() {
+		return this.endDate;
 	}
 	
 	/**

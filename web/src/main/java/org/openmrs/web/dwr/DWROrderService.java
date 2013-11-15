@@ -84,7 +84,22 @@ public class DWROrderService {
 		}
 		drugOrder.setStartDate(dStartDate);
 		
-		drugOrder.setDateCreated(new Date());
+		/*
+		 * Old unused code, when endDate was the end date and not instructions
+		 * 
+		 * Date dEndDate = null;
+		if (endDate != null) {
+			SimpleDateFormat sdf = Context.getDateFormat();
+			try {
+				dEndDate = sdf.parse(endDate);
+			}
+			catch (ParseException e) {
+				throw new DWRException(e.getMessage());
+			}
+		}
+		*/
+		//endDate is currently being used as duration
+		//drugOrder.setDuration(endDate);
 		drugOrder.setVoided(new Boolean(false));
 		
 		try {
