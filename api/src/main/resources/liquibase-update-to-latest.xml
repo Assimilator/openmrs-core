@@ -6399,5 +6399,17 @@
 		<addForeignKeyConstraint constraintName="encounter_provider_changed_by" baseTableName="encounter_provider" baseColumnNames="changed_by" referencedTableName="users" referencedColumnNames="user_id"/>
 		<addForeignKeyConstraint constraintName="encounter_provider_voided_by" baseTableName="encounter_provider" baseColumnNames="voided_by" referencedTableName="users" referencedColumnNames="user_id"/>
 	</changeSet>
+	
+	<changeSet id="20120824-1110" author="wyclif">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="obs" columnName="form_namespace_and_path" />
+			</not>
+		</preConditions>
+		<comment>Adding form_namespace_and_path column to obs table</comment>
+		<addColumn tableName="obs">
+			<column name="form_namespace_and_path" type="varchar(255)" />
+		</addColumn>
+	 </changeSet>
 
 </databaseChangeLog>
