@@ -192,6 +192,21 @@
 					<c:if test="${!drugOrderStatus.last}">, </c:if>
 				</c:forEach>
 		</span></td>
+		<%-- THIS IS WHERE MY CODE GOES --%>
+		<td id="patientHeaderObsAllergies">
+			<openmrs:message code="Allergies" />: <span id="patientHeaderAllergies">
+				<c:forEach items="${model.allergies}" var="allergy"	varStatus="allergyStatus">
+					
+					${allergy.allergen.name} <%-- - ${allergy.severity} - ${allergy.allergyType} --%>
+					<c:if test="${!allergyStatus.last}">, </c:if>
+					
+					<%--${allergy.allergen.conceptID}--%>
+					<%--${allergy.allergyType}--%>
+					<%--${allergy.severity}
+					${allergy.reaction.conceptId}--%>
+									
+				</c:forEach>
+		</span></td>
 	</tr>
 </table>
 

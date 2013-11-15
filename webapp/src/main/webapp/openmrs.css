@@ -368,6 +368,11 @@ tr td#patientHeaderObsWeight{
 tr td#patientHeaderObsRegimen{
 	border-right: 0px solid white;	
 }
+
+tr td#patientHeaderObsAllergies{
+	border-right: 0px solid white;	
+}
+
 tr td#patientHeaderObsReturnVisit {
 	display: none;
 }
@@ -382,6 +387,11 @@ tr td#patientHeaderObsReturnVisit {
 
 
 #patientHeaderRegimen {
+	font-weight: bold;
+	color: navy;
+}
+
+#patientHeaderAllergies {
 	font-weight: bold;
 	color: navy;
 }

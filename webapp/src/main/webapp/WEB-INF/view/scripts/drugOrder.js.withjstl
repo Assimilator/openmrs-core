@@ -27,7 +27,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.autoExpireDate; },
+			function(data) { return "" + data.duration; },
 			function(data) { return "" + data.instructions; },
 			function(data) {
 				var ret = "<input id=\"closebutton_" + data.orderId + "\" type=\"button\" value=\"<openmrs:message code="DrugOrder.discontinue" />\" onClick=\"showHideDiv('close_" + data.orderId + "');showHideDiv('closebutton_" + data.orderId + "')\" />";
@@ -61,7 +61,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.autoExpireDate; },
+			function(data) { return "" + data.duration; },
 			function(data) { return "" + data.instructions; }
 		];
 
@@ -75,7 +75,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.autoExpireDate; },
+			function(data) { return "" + data.duration; },
 			function(data) { return "" + data.discontinuedDate; },
 			function(data) { return "" + data.instructions; },
 			function(data) { if ( data.discontinueReason ) return "" + getReason(data.discontinueReason); else return ""; },
@@ -99,7 +99,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.autoExpireDate; },
+			function(data) { return "" + data.duration; },
 			function(data) { return "" + data.discontinuedDate; },
 			function(data) { return "" + data.instructions; },
 			function(data) { if ( data.discontinueReason ) return "" + getReason(data.discontinueReason); else return ""; },
@@ -193,7 +193,7 @@
 			var drugId = dwr.util.getValue($(drugField));
 			var dose = dwr.util.getValue($(doseField));
 			var units = dwr.util.getValue($(unitsField));
-			var frequency = dwr.util.getValue($(frequencyDayField)) + " x " + dwr.util.getValue($(frequencyWeekField));
+			var frequency = dwr.util.getValue($(frequencyDayField));
 			var startDate = dwr.util.getValue($(startDateField));
 			var instructions = "";
 			if ( drugId != '' && dose != '' && units != '' && frequency != '' && startDate != '' ) {

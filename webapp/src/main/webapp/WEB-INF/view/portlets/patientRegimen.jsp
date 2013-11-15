@@ -63,14 +63,6 @@
 										</td>
 									</tr>
 									<tr class="patientAddFlexibleRow">
-										<td><openmrs:message code="DrugOrder.dose"/></td>
-										<td class="patientAddFlexibleData">
-											<openmrs:fieldGen type="java.lang.Integer" formFieldName="dose" val="" parameters="noBind=true" />
-											<span id="unitsSpan"></span>
-											<input type="hidden" id="units" name="units" value="" />
-										</td>
-									</tr>
-									<tr class="patientAddFlexibleRow">
 										<td class="patientAddFlexibleData"><openmrs:message code="DrugOrder.frequency"/></td>
 										<td class="patientAddFlexibleData">
 											<%--<openmrs:fieldGen type="java.lang.String" formFieldName="frequency" val="" parameters="noBind=true|fieldLength=8" />--%>
@@ -79,18 +71,8 @@
 													<option value="<%= i %>/<openmrs:message code="DrugOrder.frequency.day" />"><%= i %>/<openmrs:message code="DrugOrder.frequency.day" /></option>
 												<% } %>
 											</select>
-											<span class="patientAddFlexibleDataSpan"> x </span>
-											<select name="frequencyWeek" id="frequencyWeek">
-												<openmrs:globalProperty var="drugFrequencies" key="dashboard.regimen.displayFrequencies" listSeparator="," />
-												<c:if test="${empty drugFrequencies}">
-													<option disabled>&nbsp; <openmrs:message code="DrugOrder.add.error.missingFrequency.interactions" arguments="dashboard.regimen.displayFrequencies"/></option>
-												</c:if>
-												<c:if test="${not empty drugFrequencies}">
-													<c:forEach var="drugFrequency" items="${drugFrequencies}">
-														<option value="${drugFrequency}">${drugFrequency}</option>
-													</c:forEach>
-												</c:if>											
-
+											<select name="frequencyWeek" id="frequencyWeek" hidden>
+												<option value="" selected> </option>
 											</select>
 										</td>
 									</tr>
@@ -100,6 +82,25 @@
 											<openmrs:fieldGen type="java.util.Date" formFieldName="startDate" val="" parameters="noBind=true" />
 										</td>
 									</tr>
+									<tr class="patientAddFlexibleRow">
+									<td> Duration </td>
+										<td class="patientAddFlexibleData">
+											<openmrs:fieldGen type="java.lang.Integer" formFieldName="dose" val="" parameters="noBind=true" />
+											<select name="units" id="units">
+													<option value="Days" selected> Days </option>
+                                    				<option value="Weeks"> Weeks </option>
+                                    				<option value="Months"> Months </option>
+                                    		</select>
+										</td>
+									</tr>
+									
+									<tr class="patientAddFlexibleRow">
+										<td><openmrs:message code="general.instructions"/></td>
+										<td class="patientAddFlexibleData">
+											<openmrs:fieldGen type="java.lang.String" formFieldName="instructions" val="" parameters="noBind=true" />
+										</td>
+									</tr>
+									
 									<tr class="patientAddFlexibleRow">
 										<td class="patientEmptyData"></td>
 										<td class="patientAddFlexibleActions">
@@ -125,8 +126,7 @@
 										<td colspan="2" align="center" class="patientAddFlexibleButtonData">
 											<span id="replaceNew" style="display:none"><input type="button" value="<openmrs:message code="DrugOrder.regimen.addAndReplace" />" onClick="addNewDrugOrder();"></span>
 											<span id="addNew" style="display:none"><input type="button" value="<openmrs:message code="general.add" />" onClick="addNewDrugOrder();"></span>
-											<span id="cancelNew" style="display:none"><input type="button" value="<openmrs:message code="general.cancel" />" onClick="cancelNewOrder();"></span>
-											<%--<td><input type="button" value="<openmrs:message code="general.add"/>" onClick="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate')"></td>--%>									
+											<span id="cancelNew" style="display:none"><input type="button" value="<openmrs:message code="general.cancel" />" onClick="cancelNewOrder();"></span>								
 										</td>
 									</tr>
 								</table>
@@ -183,7 +183,7 @@
 		}
 
 		function cancelNewOrder() {
-			blankAddNewOrder('drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate');
+			blankAddNewOrder('drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate', 'instructions');
 			hideDiv("addNew");
 			hideDiv("actionNew");
 			hideDiv("reasNew");
@@ -236,7 +236,7 @@
 
 				function addStandard${standardRegimen.codeName}(canReplace) {
 					var startDate = dwr.util.getValue('startDate${standardRegimen.codeName}');
-					if ( startDate && startDate != '' ) {
+					if ( startDate && startDate != '') {
 						if ( canReplace ) {
 							var action = dwr.util.getValue('actionSelect${standardRegimen.codeName}');
 							var reason = dwr.util.getValue('reason${standardRegimen.codeName}');
@@ -315,12 +315,13 @@
 			var action = dwr.util.getValue('actionSelectNew');
 			var reason = dwr.util.getValue('reasonNew');
 			var startDate = dwr.util.getValue('startDate');
+			var units = dwr.util.getValue('units');
 			var drugId = dwr.util.getValue('drug');
 			var dose = dwr.util.getValue('dose');
-			var units = dwr.util.getValue('units');
+			var instructions = dwr.util.getValue('instructions');
 			var freqDay = dwr.util.getValue('frequencyDay');
 			var freqWeek = dwr.util.getValue('frequencyWeek');
-			if ( validateNewOrder(drugId, dose, units, freqDay, freqWeek, startDate) ) {
+			if ( validateNewOrder(drugId, dose, units, freqDay, freqWeek, startDate, instructions) ) {
 				dwr.util.setValue('actionSelectNew', '');
 				dwr.util.setValue('reasonNew', '');
 				if ( action == 'void' ) {
@@ -343,7 +344,6 @@
 				else if ( dose == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingDose" />");
 				else if ( units == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingUnits" />");
 				else if ( freqDay == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingFrequency" />");
-				else if ( freqWeek == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingFrequency" />");
 				else if ( startDate == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingStartDate" />");
 			}
 		}

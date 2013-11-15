@@ -44,6 +44,13 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.Patient;
+import org.openmrs.activelist.ActiveListItem;
+import org.openmrs.activelist.Allergy;
+import org.openmrs.activelist.AllergySeverity;
+import org.openmrs.activelist.AllergyType;
+import org.openmrs.activelist.Problem;
+import org.openmrs.activelist.ProblemModifier;
 import org.openmrs.order.RegimenSuggestion;
 import org.openmrs.util.PrivilegeConstants;
 import org.openmrs.web.WebConstants;
@@ -333,6 +340,14 @@ public class PortletController implements Controller {
 						}
 						
 						model.put("patientVariation", patientVariation);
+						//TODO: add the allergies thing here-ish; hanchar
+						List<Allergy> allergies = Context.getPatientService().getAllergies(p);
+						List<List<Allergy>> ls = separate(allergies);
+						model.put("allergies", ls.get(0));
+						model.put("removedAllergies", ls.get(1));
+						model.put("allergyTypes", AllergyType.values());
+						model.put("allergySeverities", AllergySeverity.values());
+						
 					}
 				}
 			}
@@ -446,6 +461,24 @@ public class PortletController implements Controller {
 	 * could be null when this method is called.
 	 */
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
+	}
+	
+	private <T extends ActiveListItem> List<List<T>> separate(List<T> ls) {
+		List<T> active = new ArrayList<T>();
+		List<T> removed = new ArrayList<T>();
+		
+		for (T item : ls) {
+			if (item.getEndDate() == null) {
+				active.add(item);
+			} else {
+				removed.add(item);
+			}
+		}
+		
+		List<List<T>> items = new ArrayList<List<T>>(2);
+		items.add(active);
+		items.add(removed);
+		return items;
 	}
 	
 }
