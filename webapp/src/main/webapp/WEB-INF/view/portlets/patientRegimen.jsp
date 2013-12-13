@@ -124,9 +124,9 @@
 									</tr>
 									<tr class="patientAddFlexibleButtonRow">
 										<td colspan="2" align="center" class="patientAddFlexibleButtonData">
-											<span id="replaceNew" style="display:none"><input type="button" value="<openmrs:message code="DrugOrder.regimen.addAndReplace" />" onClick="addNewDrugOrder();"></span>
-											<span id="addNew" style="display:none"><input type="button" value="<openmrs:message code="general.add" />" onClick="addNewDrugOrder();"></span>
-											<span id="cancelNew" style="display:none"><input type="button" value="<openmrs:message code="general.cancel" />" onClick="cancelNewOrder();"></span>								
+											<span id="replaceNew" style="display:none"><input type="button" value="<openmrs:message code="DrugOrder.regimen.addAndReplace" />" onClick="handleAddDrugOrder();"></span>
+											<span id="addNew" style="display:none"><input type="button" value="<openmrs:message code="general.add" />" onClick="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate');"></span>
+											<span id="cancelNew" style="display:none"><input type="button" value="<openmrs:message code="general.cancel" />" onClick="cancelNewOrder();"></span>
 										</td>
 									</tr>
 								</table>
