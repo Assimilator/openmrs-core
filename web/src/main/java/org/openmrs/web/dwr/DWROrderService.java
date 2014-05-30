@@ -43,7 +43,7 @@ public class DWROrderService {
 	 * to refresh view
 	 */
 	public boolean createDrugOrder(Integer patientId, String drugId, Double dose, String units, String frequency,
-	        String startDate, String instructions) throws Exception {
+	        String startDate, String instructions, Integer quantity) throws Exception {
 		log.debug("PatientId is " + patientId + " and drugId is " + drugId + " and dose is " + dose + " and units are "
 		        + units + " and frequency is " + frequency + " and startDate is " + startDate + " and instructions are "
 		        + instructions);
@@ -71,6 +71,7 @@ public class DWROrderService {
 		drugOrder.setUnits(units);
 		drugOrder.setFrequency(frequency);
 		drugOrder.setInstructions(instructions);
+		drugOrder.setQuantity(quantity);
 		
 		Date dStartDate = null;
 		if (startDate != null) {

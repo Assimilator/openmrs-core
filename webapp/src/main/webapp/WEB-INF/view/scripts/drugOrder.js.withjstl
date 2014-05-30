@@ -27,7 +27,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.duration; },
+			//function(data) { return "" + data.duration; },
 			function(data) { return "" + data.instructions; },
 			function(data) {
 				var ret = "<input id=\"closebutton_" + data.orderId + "\" type=\"button\" value=\"<openmrs:message code="DrugOrder.discontinue" />\" onClick=\"showHideDiv('close_" + data.orderId + "');showHideDiv('closebutton_" + data.orderId + "')\" />";
@@ -61,7 +61,7 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.duration; },
+			//function(data) { return "" + data.duration; },
 			function(data) { return "" + data.instructions; }
 		];
 
@@ -75,8 +75,8 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.duration; },
-			function(data) { return "" + data.discontinuedDate; },
+			//function(data) { return "" + data.duration; },
+			//function(data) { return "" + data.discontinuedDate; },
 			function(data) { return "" + data.instructions; },
 			function(data) { if ( data.discontinueReason ) return "" + getReason(data.discontinueReason); else return ""; },
 			function(data) {
@@ -99,8 +99,8 @@
 			function(data) { return data.dose + " " + data.units; },
 			function(data) { return "" + data.frequency; },
 			function(data) { return "" + data.startDate; },
-			function(data) { return "" + data.duration; },
-			function(data) { return "" + data.discontinuedDate; },
+			//function(data) { return "" + data.duration; },
+			//function(data) { return "" + data.discontinuedDate; },
 			function(data) { return "" + data.instructions; },
 			function(data) { if ( data.discontinueReason ) return "" + getReason(data.discontinueReason); else return ""; },
 		];
@@ -189,16 +189,36 @@
 			}
 		}
 		
-		function handleAddDrugOrder( patientId, drugField, doseField, unitsField, frequencyDayField, frequencyWeekField, startDateField) {
+		function handleAddDrugOrder( patientId, drugField, doseField, unitsField, frequencyDayField, quantityField, startDateField, instructionsField) {
 			var drugId = dwr.util.getValue($(drugField));
 			var dose = dwr.util.getValue($(doseField));
 			var units = dwr.util.getValue($(unitsField));
 			var frequency = dwr.util.getValue($(frequencyDayField));
 			var startDate = dwr.util.getValue($(startDateField));
-			var instructions = "";
+			var instructions = dwr.util.getValue($(instructionsField));
+			var quantity = dwr.util.getValue($(quantityField));
+
+			if (quantity !== '') {
+				quantity = parseInt(quantity, 10);
+
+				if (isNaN(quantity)) {
+					alert("Quantity should be a positive number.");
+					return;					
+				}
+
+				if (quantity <= 0) {
+
+					alert("Quantity should be a positive number.");
+					return;	
+				}
+			}
+			
 			if ( drugId != '' && dose != '' && units != '' && frequency != '' && startDate != '' ) {
-				blankAddNewOrder(drugField, doseField, unitsField, frequencyDayField, frequencyWeekField, startDateField);
-				DWROrderService.createDrugOrder(patientId, drugId, dose, units, frequency, startDate, instructions, waitToRefreshRegimenTables);
+			
+				blankAddNewOrder(drugField, doseField, unitsField, frequencyDayField, quantityField, startDateField);
+				dwr.util.setValue($(instructionsField),"");
+				DWROrderService.createDrugOrder(patientId, drugId, dose, units, frequency, startDate, instructions, quantity, waitToRefreshRegimenTables);
+			
 			} else {
 				if ( drugId == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingDrug" />");
 				else if ( dose == '' ) alert("<openmrs:message code="DrugOrder.add.error.missingDose" />");
@@ -208,12 +228,13 @@
 			}
 		}
 
-		function blankAddNewOrder(drugField, doseField, unitsField, frequencyDayField, frequencyWeekField, startDateField) {
+		function blankAddNewOrder(drugField, doseField, unitsField, frequencyDayField, quantityField, startDateField) {
+
 				dwr.util.setValue($(drugField),"");
 				dwr.util.setValue($(doseField),"");
 				dwr.util.setValue($(unitsField),"");
 				dwr.util.setValue($(frequencyDayField),"");
-				dwr.util.setValue($(frequencyWeekField),"");
+				dwr.util.setValue($(quantityField),"");
 				dwr.util.setValue($(startDateField),"");
 		}
 		

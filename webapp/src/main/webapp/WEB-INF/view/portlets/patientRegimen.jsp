@@ -51,7 +51,7 @@
 						
 						<td valign="top" align="right" class="patientRegimeDataFlexible">
 							<div id="regimenPortletAddFlexible">
-								<form method="post" id="orderForm" onSubmit="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate')">
+								<form method="post" id="orderForm" onSubmit="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'quantity', 'startDate', 'instructions')">
 								<table class="patientAddFlexibleTable">
 									<tr class="patientAddFlexibleRow">
 										<td colspan="2" class="patientAddFlexibleData"><strong><openmrs:message code="DrugOrder.regimens.addCustom"/></strong></td>
@@ -71,10 +71,13 @@
 													<option value="<%= i %>/<openmrs:message code="DrugOrder.frequency.day" />"><%= i %>/<openmrs:message code="DrugOrder.frequency.day" /></option>
 												<% } %>
 											</select>
-											<select name="frequencyWeek" id="frequencyWeek" hidden>
-												<option value="" selected> </option>
-											</select>
 										</td>
+									</tr>
+									<tr class="patientAddFlexibleRow">
+										<td class="patientAddFlexibleData">Quantity</td>
+										<td>
+											<openmrs:fieldGen type="java.lang.Integer" formFieldName="quantity" val="" parameters="noBind=true" />
+										</td>	
 									</tr>
 									<tr class="patientAddFlexibleDateRow">
 										<td class="patientAddFlexibleDate"><openmrs:message code="general.dateStart"/></td>
@@ -125,7 +128,7 @@
 									<tr class="patientAddFlexibleButtonRow">
 										<td colspan="2" align="center" class="patientAddFlexibleButtonData">
 											<span id="replaceNew" style="display:none"><input type="button" value="<openmrs:message code="DrugOrder.regimen.addAndReplace" />" onClick="handleAddDrugOrder();"></span>
-											<span id="addNew" style="display:none"><input type="button" value="<openmrs:message code="general.add" />" onClick="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'frequencyWeek', 'startDate');"></span>
+											<span id="addNew" style="display:none"><input type="button" value="<openmrs:message code="general.add" />" onClick="handleAddDrugOrder(${model.patientId}, 'drug', 'dose', 'units', 'frequencyDay', 'quantity', 'startDate', 'instructions');"></span>
 											<span id="cancelNew" style="display:none"><input type="button" value="<openmrs:message code="general.cancel" />" onClick="cancelNewOrder();"></span>
 										</td>
 									</tr>
