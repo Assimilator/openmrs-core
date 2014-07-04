@@ -281,7 +281,7 @@
 			</c:forEach>
 
 			function addStandardDrug(drugId, dose, units, frequency, instructions, startDate) {
-				DWROrderService.createDrugOrder(${model.patientId}, drugId, dose, units, frequency, startDate, instructions, dwrOrderNotifyComplete);
+				DWROrderService.createDrugOrder(${model.patientId}, drugId, dose, units, frequency, startDate, instructions, 0, dwrOrderNotifyComplete);
 			}
 
 			function doNothing() {

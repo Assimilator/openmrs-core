@@ -43,12 +43,22 @@
 						<c:forEach items="${model.currentDrugOrderSets['*']}" var="drugOrder">
 							<tr class="regimenCurrentDrugRow">
 								<td class="regimenCurrentDrugEmptyData">&nbsp;&nbsp;&nbsp;&nbsp;
-									<c:if test="${!empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
-									</c:if>
-									<c:if test="${empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
-									</c:if>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="false">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="true">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
 								</td>
 								<td class="regimenCurrentDrugDoseData"> ${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
@@ -164,12 +174,22 @@
 						<c:forEach items="${model.currentDrugOrderSets[drugSetId]}" var="drugOrder">
 							<tr class="regimenCurrentDrugOrderRow">
 								<td class="regimenCurrentDrugEmptyData">&nbsp;&nbsp;&nbsp;&nbsp;
-									<c:if test="${!empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
-									</c:if>
-									<c:if test="${empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
-									</c:if>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="false">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="true">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
 								</td>
 								<td class="regimenCurrentDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
@@ -235,12 +255,22 @@
 						<c:forEach items="${model.currentDrugOrders}" var="drugOrder">
 							<tr class="regimenTableCurrentRow">
 								<td class="regimenCurrentDrugNameData">
-									<c:if test="${!empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
-									</c:if>
-									<c:if test="${empty drugOrder.drug}">
-										<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
-									</c:if>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="false">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="${pageContext.request.contextPath}/admin/orders/orderDrug.form?orderId=${drugOrder.orderId}">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
+									<openmrs:hasPrivilege privilege="Manage Orders" inverse="true">
+										<c:if test="${!empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.drug.name}</a>
+										</c:if>
+										<c:if test="${empty drugOrder.drug}">
+											<a class="patientRegimenDrugName" href="#pageBody">${drugOrder.concept.name.name}</a>
+										</c:if>
+									</openmrs:hasPrivilege>
 								</td>
 								<td class="regimenCurrentDrugDoseData">${drugOrder.dose} ${drugOrder.units}</td>
 								<td class="regimenCurrentDrugFrequencyData">${drugOrder.frequency}</td>
@@ -305,5 +335,24 @@
 				setDisplayDrugSetIds("${model.displayDrugSetIds}");
 				setRegimenMode("${model.currentRegimenMode}");
 			</script>
+			<openmrs:hasPrivilege privilege="Manage Orders" inverse="true">
+				<script type="text/javascript">
+					$j(".patientRegimenDrugName").each(
+							function(i, e) { 
+								e.onclick=function() {
+									$j("#openmrs_dwr_error").show("slow", function () {
+										$j("#openmrs_dwr_error_msg").text("You don't have privileges to edit orders.");
+									});
+	
+									window.setTimeout(function () {
+										$j("#openmrs_dwr_error").hide("slow", function () {
+											$j("#openmrs_dwr_error_msg").text("");
+										});
+									}, 4000);
+								}
+							}
+						);
+				</script>
+			</openmrs:hasPrivilege>
 		</div>
 
