@@ -28,6 +28,7 @@
 		<convert converter="bean" match="org.openmrs.web.dwr.RelationshipListItem"/>
 		<convert converter="bean" match="org.openmrs.web.dwr.ListItem"/>
 		<convert converter="bean" match="org.openmrs.web.dwr.DrugOrderListItem"/>
+		<convert converter="bean" match="org.openmrs.web.dwr.MappedDrugOrders"/>
 		<convert converter="bean" match="org.openmrs.web.dwr.DrugSetItem"/>
 		<convert converter="bean" match="org.openmrs.web.dwr.PatientProgramItem"/>
 		<convert converter="bean" match="org.openmrs.web.dwr.PatientStateItem"/>
@@ -184,6 +185,8 @@
 			<include method="voidOrder"/>
 			<include method="discontinueOrder"/>
 			<include method="getDrugOrdersByPatientId"/>
+			<include method="createDrugOrderByObject"/>
+			<include method="getMappedDrugOrdersByPatientIdDrugSetId"/>
 			<include method="getCurrentDrugOrdersByPatientId"/>
 			<include method="getCompletedDrugOrdersByPatientId"/>
 			<include method="getUnitsByDrugId"/>
@@ -266,6 +269,7 @@
 			import org.openmrs.notification.web.dwr.DWRMessageService;
 			import java.util.Date;
 			import java.util.List;
+			import java.util.Map;
 			
 			DWRConceptService.findConcepts(String phrase, boolean includeRetired, List<String> includeClassNames, List<String> excludeClassNames, List<String> includeDatatypes, List<String> excludeDatatypes, boolean includeDrugConcepts);
 			DWRConceptService.findConceptAnswers(String phrase, Integer conceptId, boolean includeRetired, boolean includeDrugConcepts);

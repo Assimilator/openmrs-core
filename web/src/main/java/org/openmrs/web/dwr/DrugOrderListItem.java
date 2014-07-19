@@ -28,6 +28,8 @@ public class DrugOrderListItem {
 	
 	private Integer orderTypeId;
 	
+	private Integer patientId;
+	
 	private Integer conceptId;
 	
 	private String conceptName;
@@ -42,9 +44,13 @@ public class DrugOrderListItem {
 	
 	private Integer ordererId;
 	
+	private String ordererName;
+	
 	private Boolean discontinued;
 	
 	private Integer discontinuerId;
+	
+	private String discontinuerName;
 	
 	private String discontinuedDate;
 	
@@ -70,11 +76,15 @@ public class DrugOrderListItem {
 	
 	private Integer voiderId;
 	
+	private String voiderName;
+	
 	private String voidedDate;
 	
 	private String voidReason;
 	
 	private Integer creatorId;
+	
+	private String creatorName;
 	
 	private String createdDate;
 	
@@ -95,6 +105,9 @@ public class DrugOrderListItem {
 		}
 		instructions = drugOrder.getInstructions();
 		
+		if (drugOrder.getPatient() != null)
+			this.patientId = drugOrder.getPatient().getPatientId();
+		
 		SimpleDateFormat sdf = Context.getDateFormat();
 		
 		if (drugOrder.getStartDate() != null)
@@ -103,11 +116,15 @@ public class DrugOrderListItem {
 			autoExpireDate = sdf.format(drugOrder.getAutoExpireDate());
 		if (drugOrder.getEncounter() != null)
 			encounterId = drugOrder.getEncounter().getEncounterId();
-		if (drugOrder.getOrderer() != null)
+		if (drugOrder.getOrderer() != null) {
 			ordererId = drugOrder.getOrderer().getUserId();
+			ordererName = drugOrder.getOrderer().getName();
+		}
 		discontinued = drugOrder.getDiscontinued();
-		if (drugOrder.getDiscontinuedBy() != null)
+		if (drugOrder.getDiscontinuedBy() != null) {
 			discontinuerId = drugOrder.getDiscontinuedBy().getUserId();
+			setDiscontinuerName(drugOrder.getDiscontinuedBy().getPersonName().getFullName());
+		}
 		if (drugOrder.getDiscontinuedDate() != null)
 			discontinuedDate = sdf.format(drugOrder.getDiscontinuedDate());
 		if (drugOrder.getDiscontinuedReason() != null)
@@ -123,13 +140,21 @@ public class DrugOrderListItem {
 		complex = drugOrder.getComplex();
 		quantity = drugOrder.getQuantity();
 		voided = drugOrder.getVoided();
-		if (drugOrder.getVoidedBy() != null)
+		
+		if (drugOrder.getVoidedBy() != null) {
 			voiderId = drugOrder.getVoidedBy().getUserId();
-		if (drugOrder.getDateVoided() != null)
+			voiderName = drugOrder.getVoidedBy().getPersonName().getFullName();
+		}
+		
+		if (drugOrder.getDateVoided() != null) {
 			voidedDate = sdf.format(drugOrder.getDateVoided());
-		voidReason = drugOrder.getVoidReason();
-		if (drugOrder.getCreator() != null)
+			voidReason = drugOrder.getVoidReason();
+		}
+		
+		if (drugOrder.getCreator() != null) {
 			creatorId = drugOrder.getCreator().getUserId();
+			creatorName = drugOrder.getCreator().getPersonName().getFullName();
+		}
 		if (drugOrder.getDateCreated() != null)
 			createdDate = sdf.format(drugOrder.getDateCreated());
 	}
@@ -209,6 +234,14 @@ public class DrugOrderListItem {
 	 */
 	public Integer getDiscontinuerId() {
 		return discontinuerId;
+	}
+	
+	public String getDiscontinuerName() {
+		return discontinuerName;
+	}
+	
+	public void setDiscontinuerName(String discontinuerName) {
+		this.discontinuerName = discontinuerName;
 	}
 	
 	/**
@@ -567,5 +600,37 @@ public class DrugOrderListItem {
 	
 	public void setConceptName(String conceptName) {
 		this.conceptName = conceptName;
+	}
+	
+	public Integer getPatientId() {
+		return patientId;
+	}
+	
+	public void setPatientId(Integer patientId) {
+		this.patientId = patientId;
+	}
+	
+	public String getOrdererName() {
+		return ordererName;
+	}
+	
+	public void setOrdererName(String ordererName) {
+		this.ordererName = ordererName;
+	}
+	
+	public String getVoiderName() {
+		return voiderName;
+	}
+	
+	public void setVoiderName(String voiderName) {
+		this.voiderName = voiderName;
+	}
+	
+	public String getCreatorName() {
+		return creatorName;
+	}
+	
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
 	}
 }

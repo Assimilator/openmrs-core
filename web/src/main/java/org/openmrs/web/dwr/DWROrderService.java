@@ -15,7 +15,9 @@ package org.openmrs.web.dwr;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -37,6 +39,85 @@ import org.openmrs.util.OpenmrsUtil;
 public class DWROrderService {
 	
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	public Boolean createDrugOrderByObject(DrugOrderListItem drugOrderItem) throws Exception {
+		
+		DrugOrder drugOrder = new DrugOrder();
+		Boolean ret = true;
+		
+		if (drugOrderItem == null)
+			throw new DWRException("Drug item cannot be null");
+		
+		if (drugOrderItem.getPatientId() == null)
+			throw new DWRException("Patient cannot be null");
+		
+		Patient patient = Context.getPatientService().getPatient(drugOrderItem.getPatientId());
+		
+		if (patient == null)
+			throw new DWRException("The specified patient was not found.");
+		
+		drugOrder.setPatient(patient);
+		
+		Drug drug = Context.getConceptService().getDrug(drugOrderItem.getDrugId());
+		
+		if (drug == null)
+			throw new DWRException("Invalid drug.");
+		
+		drugOrder.setDrug(drug);
+		drugOrder.setConcept(drug.getConcept());
+		
+		OrderType orderType = Context.getOrderService().getOrderType(OpenmrsConstants.ORDERTYPE_DRUG);
+		if (orderType == null)
+			throw new DWRException(
+			        "There is no 'Drug' Order Type in the system.  This must be an Order Type with orderTypeId = "
+			                + OpenmrsConstants.ORDERTYPE_DRUG);
+		
+		drugOrder.setOrderType(orderType);
+		
+		drugOrder.setDose(drugOrderItem.getDose());
+		drugOrder.setUnits(drugOrderItem.getUnits());
+		drugOrder.setFrequency(drugOrderItem.getFrequency());
+		drugOrder.setInstructions(drugOrderItem.getInstructions());
+		drugOrder.setQuantity(drugOrderItem.getQuantity());
+		drugOrder.setOrderer(Context.getAuthenticatedUser());
+		
+		Date date = null;
+		
+		SimpleDateFormat sdf = Context.getDateFormat();
+		
+		try {
+			date = sdf.parse(drugOrderItem.getStartDate());
+		}
+		catch (ParseException e) {
+			throw new DWRException(e.getMessage());
+		}
+		
+		drugOrder.setStartDate(date);
+		
+		if (drugOrderItem.getAutoExpireDate() != null) {
+			try {
+				date = sdf.parse(drugOrderItem.getAutoExpireDate());
+			}
+			catch (ParseException e) {
+				throw new DWRException(e.getMessage());
+			}
+			drugOrder.setAutoExpireDate(date);
+			drugOrder.setDuration(date.toString());
+		}
+		
+		drugOrder.setVoided(new Boolean(false));
+		
+		try {
+			Context.getOrderService().saveOrder(drugOrder);
+		}
+		catch (APIException e) {
+			throw new DWRException(e.getMessage());
+		}
+		
+		log.debug("Finished creating new drug order");
+		
+		return ret;
+	}
 	
 	/**
 	 * This method would normally be return type void, but DWR requires a callback, so we know when
@@ -272,6 +353,54 @@ public class DWROrderService {
 		}
 		
 		return ret;
+	}
+	
+	public MappedDrugOrders getMappedDrugOrdersByPatientIdDrugSetId(Integer patientId, String drugSetId, int whatToShow)
+	        throws Exception {
+		
+		log.debug("Entering getMappedDrugOrdersByPatientIdDrugSetId method with drugSetId: " + drugSetId);
+		
+		MappedDrugOrders mret = new MappedDrugOrders();
+		Map<String, List<DrugOrderListItem>> ret = null;
+		Map<String, List<DrugOrder>> ordersBySetId = this.getOrdersByDrugSet(patientId, drugSetId, ",", whatToShow);
+		List<String> l = new ArrayList<String>();
+		
+		if (ordersBySetId != null) {
+			if (ret == null)
+				ret = new HashMap<String, List<DrugOrderListItem>>();
+			
+			for (String key : ordersBySetId.keySet()) {
+				
+				List<DrugOrder> orders = ordersBySetId.get(key);
+				ArrayList<DrugOrderListItem> orderitems = null;
+				l.add(key);
+				
+				if (orders != null) {
+					
+					for (DrugOrder order : orders) {
+						if (orderitems == null)
+							orderitems = new ArrayList<DrugOrderListItem>(orders.size());
+						
+						DrugOrderListItem drugOrderItem = new DrugOrderListItem(order);
+						
+						if (!key.equals("*"))
+							drugOrderItem.setDrugSetId(OpenmrsUtil.getConceptByIdOrName(key).getConceptId());
+						
+						drugOrderItem.setDrugSetLabel(key.replace(" ", "_"));
+						orderitems.add(drugOrderItem);
+					}
+					
+				}
+				
+				ret.put(key, orderitems);
+				
+			}
+		}
+		
+		mret.setDrugsMap(ret);
+		mret.setDrugSets(l);
+		
+		return mret;
 	}
 	
 	public Vector<DrugOrderListItem> getDrugOrdersByPatientIdDrugSetId(Integer patientId, String drugSetId, int whatToShow) {

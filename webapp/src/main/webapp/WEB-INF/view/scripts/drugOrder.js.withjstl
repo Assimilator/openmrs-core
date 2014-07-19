@@ -1,9 +1,26 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		var displayDrugSetIds = "";
 		var patientId = "";
 		var regimenMode = "edit";
 		var numCurrentOrders = 0;
+
+
 
 		// create a js variable called discReasons that is an array of reasons to discontinue a drug - this will become the select field via DWRUtil.addOptions();...
 		<openmrs:fieldGen type="org.openmrs.DrugOrder.discontinuedReason" formFieldName="discReasons" val="" parameters="optionHeader=[blank]|jsVar=discReasons|globalProp=concept.reasonOrderStopped" />
@@ -109,7 +126,7 @@
 			function(data) { 
 				var headerName = data.name;
 				if ( headerName == '*' ) headerName = '<openmrs:message code="DrugOrder.header.otherRegimens" />';
-				var ret = "<table><tr><td style=\"padding:7px 5px 2px 5px\">" + headerName + "";
+				var ret = "<table><tr><td style=\"padding:7px 5px 2px 5px\">" + headerName.toUpperCase();  + "";
 				
 				if ( data.drugCount > 0 && data.drugSetLabel != '__other__' && regimenMode != 'view' ) {
 					ret += "</td><td style=\"padding:7px 5px 0px 5px\"><input id=\"closegpbutton_" + data.drugSetId + "\" type=\"button\" value=\"<openmrs:message code="DrugOrder.discontinueGroup" />\" onClick=\"showHideDiv('closegp_" + data.drugSetId + "');showHideDiv('closegpbutton_" + data.drugSetId + "')\" />";
@@ -143,7 +160,7 @@
 			function(data) { 
 				var headerName = data.name;
 				if ( headerName == '*' ) headerName = '<openmrs:message code="DrugOrder.header.otherRegimens" />';
-				var ret = "<table><tr><td style=\"padding:7px 5px 2px 5px\">" + headerName + "";
+				var ret = "<table><tr><td style=\"padding:7px 5px 2px 5px\">" + headerName.toUpperCase(); + "";
 				if ( data.drugCount == 0 ) {
 					ret += "</td></tr><tr><td style=\"padding:1px 3px 1px 3px\">&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"noOrdersMessage\">(<openmrs:message code="DrugOrder.list.noOrders" />)</span></td></tr></table>";
 				} else {
@@ -494,3 +511,92 @@
 		function setHasOrders(val) {
 			hasOrders = val;
 		}
+		
+		
+		
+var PrescriptionManager =  function () {
+
+
+	var self = this;
+	
+	self.drugSetNames = displayDrugSetIds.split(",");
+	self.tableSetNames = {}
+	self.currentTables = {};
+	self.pastTables = {};
+
+
+	for (var i = 0; i < self.drugSetNames.length; i++) {
+		
+		var fname = self.drugSetNames[i].replace(/\s/g, "_");
+		
+		if (fname === "*")
+			fname = "__other__";
+		
+		self.tableSetNames[self.drugSetNames[i]] = fname;
+		self.currentTables[self.drugSetNames[i]] = $j("#regimenTableCurrent_" + fname);
+		self.pastTables[self.drugSetNames[i]] = $j("#regimenTableCompleted_" + fname);	
+	}
+	
+	
+	
+	self.createHeadres = function() {
+
+		self.drugSetNames.forEach(function(id) { 
+		
+			if ( id == '*' ) {
+
+				DWROrderService.getCurrentOtherDrugSet(patientId, displayDrugSetIds, addCurrentDrugSetHeader);
+				DWROrderService.getCompletedOtherDrugSet(patientId, displayDrugSetIds, addCompletedDrugSetHeader);
+
+			} else {
+
+				DWROrderService.getCurrentDrugSet(patientId, id, addCurrentDrugSetHeader);
+				DWROrderService.getCompletedDrugSet(patientId, id, addCompletedDrugSetHeader);
+			}		
+		});
+	}
+	
+	self.refreshTables =  function() {
+		
+		self.drugSetNames.forEach(function(id){
+			
+			self.currentTables[id].children().remove();
+			self.pastTables[id].children().remove();
+			
+			if ( id == '*' ) {
+				DWROrderService.getCurrentOtherDrugOrdersByPatientIdDrugSetId(patientId, displayDrugSetIds, addCurrentDrugOrders);
+				DWROrderService.getCompletedOtherDrugOrdersByPatientIdDrugSetId(patientId, displayDrugSetIds, addCompletedDrugOrders);
+
+			} else {
+				var tableId = 'regimenTableCurrent_' + id.replace(/\s/g, "_");
+				DWROrderService.getCurrentDrugOrdersByPatientIdDrugSetId(patientId, id, addCurrentDrugOrders);
+				DWROrderService.getCompletedDrugOrdersByPatientIdDrugSetId(patientId, id, addCompletedDrugOrders);
+				
+			}		
+
+			if (self.currentTables[id].children().length == 0) {
+				self.currentTables[id].append("<td style=\"padding:1px 3px 1px 3px\">&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"noOrdersMessage\">(No orders)</span></td>");
+			}
+			
+			if (self.pastTables[id].children().length == 0) {
+				self.pastTables[id].append("<td style=\"padding:1px 3px 1px 3px\">&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"noOrdersMessage\">(No orders)</span></td>");
+			}
+
+		
+		});
+		
+	}
+
+};
+
+
+
+var presManager;
+$j(document).ready( function(){
+	presManager = new PrescriptionManager();
+	//presManager.render();
+});
+
+
+
+		
