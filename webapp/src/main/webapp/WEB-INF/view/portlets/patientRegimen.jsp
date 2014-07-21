@@ -125,6 +125,7 @@
 											times per 
 											<select name="frequency_unit" id="frequency_unit">
 											</select>
+											<input type="checkbox" id="drugorder_prn" name="drugorder_prn" value="no">prn/as needed<br>
 											<div id="frequency_error" class="error" style="display:none"></div>
 										</td>
 									</tr>
@@ -440,6 +441,7 @@
 			self.instructions = new BaseField("#instructions", "#instructions_error");
 			
 			self.freq = new UnitField("#frequency","#frequency_unit", "#frequency_error", "day|week|month", "select a valid frequency", false);
+			self.freq.prn = $j("#drugorder_prn");
 			
 			self.dose = new UnitField("#dose","#dose_unit", "#dose_error", "mg|ml|grams|liters|tablets|capsules|bottles|other", "select a valid dosage", false);
 			
@@ -486,13 +488,13 @@
 			self.validate = function() {
 				var ret = true;
 				
-				ret &= self.drug.validate();
-				ret &= self.freq.validate();
-				ret &= self.dose.validate();
-				ret &= self.quantity.validate();
-				ret &= self.start.validate();
-				ret &= self.duration.validate();
-				ret &= self.instructions.validate();
+				ret = (ret && self.drug.validate());
+				ret = (ret &&  self.freq.validate());
+				ret = (ret &&  self.dose.validate());
+				ret = (ret &&  self.quantity.validate());
+				ret = (ret &&  self.start.validate());
+				ret = (ret &&  self.duration.validate());
+				ret = (ret &&  self.instructions.validate());
 				
 				return ret;
 			};
@@ -507,11 +509,12 @@
 				self.duration.clear();
 				self.instructions.clear();
 				self.duration.field_check.attr( "checked", false);
+				self.freq.prn.attr("checked", false);
 			};
 			
 			self.getFilledData = function () {
 
-				var f = function (n) {return "" + (n.getMonth()+1) + "/" + n.getDate()+ "/"+  n.getFullYear()}
+				var f = function (n) {return "" + (n.getMonth()+1) + "/" + n.getDate()+ "/"+  n.getFullYear();};
 				
 				var drugOrderItem = {
 						  patientId: 	patientId,	
@@ -520,18 +523,19 @@
 						  units: 		self.dose.field_unit.val(),	
 						  frequency: 	"" + self.freq.field.val() + " times a " + self.freq.field_unit.val(),	
 						  instructions: self.instructions.field.val(),	
-						  startDate: 	new Date(self.start.field.val())
+						  startDate: 	new Date(self.start.field.val()),
+						  prn:			self.freq.prn.attr( "checked" ),
 						};
-				
+								
 				
 				if (self.quantity.field.val() != "") {
 					drugOrderItem.quantity = self.quantity.field.val();
 				}
 				
-				if (self.quantity.field.val() & self.quantity.field.val() != "")
+				if (self.quantity.field.val() && self.quantity.field.val() != "")
 					drugOrderItem.instructions += " (quantity: " +self.quantity.field.val()+" "+self.quantity.field_unit.val()+")"; 
 				
-				
+						
 				if (!self.duration.field_check.attr( "checked" )) {
 					var durMs = (parseInt(self.duration.field.val())) * 24 * 3600 * 1000;
 					var durationUnit =  self.duration.field_unit.val();
@@ -546,6 +550,9 @@
 
 					drugOrderItem.autoExpireDate = f(end);
 				}
+				
+				if (drugOrderItem.autoExpireDate == "")
+					drugOrderItem.autoExpireDate = null;
 				
 				drugOrderItem.startDate = f(drugOrderItem.startDate);
 				
@@ -565,7 +572,7 @@
 				if(!drugOrderForm.validate())
 					return;				
 				
-				drugOrder = self.getFilledData();
+				var drugOrder = self.getFilledData();
 				self.hide();
 				DWROrderService.createDrugOrderByObject(drugOrder, function(d) {if (d) {regimentTables.refreshTables();} } );
 				
@@ -580,8 +587,6 @@
 		
 		var regimentTables = new function(){
 
-					
-			var usercache = [];
 			<openmrs:fieldGen type="org.openmrs.DrugOrder.discontinuedReason" formFieldName="discReasons" val="" parameters="optionHeader=[blank]|jsVar=discReasons|globalProp=concept.reasonOrderStopped" />
 		
 		
@@ -634,21 +639,18 @@
 						});
 					}
 					
-					self.details.append(drugorder.frequency);
 
 					if (drugorder.instructions != null && drugorder.instructions != "") 
-						self.instructions.append(drugorder.instructions);
+						self.instructions.append(drugorder.instructions + ".");
 
 				} else {
 
-
-					
 					self.showed = false;
 					self.table.fadeTo(0, 0.5);
 					self.table.find(".drugorder_tr").hide();
 					
 					self.table.find(".drugorder_title").click(function() {
-						if(self.showed){
+						if(self.showed) {
 							self.showed = false;
 							self.table.find(".drugorder_tr").hide();
 							self.table.fadeTo(0, 0.5);
@@ -695,7 +697,7 @@
 								
 								self.instructions.append(inst);
 							});
-						}
+						};
 						
 					} else {
 						
@@ -713,15 +715,21 @@
 							inst = inst + ("Prescribed by "+drugorder.creatorName + " in " + drugorder.createdDate + ".");
 						}
 						
-						console.log(inst);
 						self.instructions.append(inst);						
-					}					
+					};				
 				}
 				
 
-				var details = drugorder.frequency + ".";
-
-								
+				var details = "";
+				
+				if (drugorder.frequency != null || drugorder.frequency != "")
+					details = (details + drugorder.frequency);
+				
+				if (drugorder.prn != null)
+					details = (details + (drugorder.prn? " (as needed)" : ""));
+				
+				details = (details + ".");
+				
 				if (drugorder.autoExpireDate == null || drugorder.autoExpireDate == "") {
 					details += " Start: " + drugorder.startDate;
 				} else {
@@ -759,10 +767,9 @@
 						alert("Please, select a reason.");
 						return;						
 					}
-					
-					
+										
 					//console.log(drugorder.orderId +" " + res + "  " +  date);
-					DWROrderService.discontinueOrder(drugorder.orderId, res, date, function () {regimentTables.refreshTables() });
+					DWROrderService.discontinueOrder(drugorder.orderId, res, date, function () {regimentTables.refreshTables();});
 				});
 				
 				sform.find("#drugorder_stop_form_cancel").click(function(){
@@ -781,7 +788,7 @@
 					}
 
 					console.log(drugorder.orderId +" " + res);
-					DWROrderService.voidOrder(drugorder.orderId, res, function () {regimentTables.refreshTables() });
+					DWROrderService.voidOrder(drugorder.orderId, res, function () {regimentTables.refreshTables();});
 					
 				});
 				
@@ -831,7 +838,6 @@
 			
 			</c:forTokens>
 
-			
 			self.tdata = {};
 			self.ddata = {};
 			
@@ -871,46 +877,6 @@
 					self.currentTables[id].find(".noDrugsOrderRow").show();
 				});
 				
-				/*
-				function current(id, data) {
-					self.tdata[id] = data;
-					
-					self.currentTables[id].find(".noDrugsOrderRow").show();
-					
-					if (!data)
-						return;
-					
-					if (data.length == 0)
-						return
-					
-					data.forEach( function(e,i){var t = new DrugTable(e.ortherId+id, e); self.currentTables[id].append(t.envolve()); t.show();} ) 			
-
-					self.currentTables[id].find(".noDrugsOrderRow").hide();
-
-				}
-				
-				function completed(id, data) {
-					self.ddata[id] = data;
-					
-					self.completedTables[id].find(".noDrugsOrderRow").show();
-					
-					if (!data)
-						return;
-					
-					if (data.length == 0)
-						return;
-					
-					data.forEach( function(e,i){
-						var t = new DrugTable(e.conceptId+id, e); 
-						self.completedTables[id].append(t.envolve()); 
-						t.sform.children().remove();
-						t.stop.remove();	
-						t.show();
-					}); 			
-
-					self.completedTables[id].find(".noDrugsOrderRow").hide();
-				};
-				*/
 	
 				
 				DWROrderService.getMappedDrugOrdersByPatientIdDrugSetId(patientId, displayDrugSetIds, 4, function(data){
@@ -925,6 +891,10 @@
 							return;
 						
 						var drugOrderList = data.drugsMap[set]; 
+						
+						if (drugOrderList == null || drugOrderList.length == 0)
+							return;
+						
 						drugOrderList.sort(comp);
 						drugOrderList.forEach(function (drugOrder, i) {
 							
@@ -934,7 +904,7 @@
 							if (drugOrder.discontinued) {
 								self.addToCompleted(drugOrder);
 							} else {
-								if (drugOrder.autoExpireDate == "") {
+								if (drugOrder.autoExpireDate == null || drugOrder.autoExpireDate == "") {
 									self.addToCurrent(drugOrder);
 								}else {
 									var ddate  = new Date(drugOrder.autoExpireDate);
@@ -943,9 +913,9 @@
 										self.addToCurrent(drugOrder);
 									} else {
 										self.addToCompleted(drugOrder);
-									}
-								}
-							} 
+									};
+								};
+							};
 														
 						});
 					});

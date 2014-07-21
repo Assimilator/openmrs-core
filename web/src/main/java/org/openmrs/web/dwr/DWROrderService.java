@@ -80,6 +80,7 @@ public class DWROrderService {
 		drugOrder.setInstructions(drugOrderItem.getInstructions());
 		drugOrder.setQuantity(drugOrderItem.getQuantity());
 		drugOrder.setOrderer(Context.getAuthenticatedUser());
+		drugOrder.setPrn(drugOrderItem.getPrn());
 		
 		Date date = null;
 		
@@ -95,14 +96,16 @@ public class DWROrderService {
 		drugOrder.setStartDate(date);
 		
 		if (drugOrderItem.getAutoExpireDate() != null) {
-			try {
-				date = sdf.parse(drugOrderItem.getAutoExpireDate());
+			if (!drugOrderItem.getAutoExpireDate().equals("")) {
+				try {
+					date = sdf.parse(drugOrderItem.getAutoExpireDate());
+					drugOrder.setAutoExpireDate(date);
+					drugOrder.setDuration(date.toString());
+				}
+				catch (ParseException e) {
+					throw new DWRException(e.getMessage());
+				}
 			}
-			catch (ParseException e) {
-				throw new DWRException(e.getMessage());
-			}
-			drugOrder.setAutoExpireDate(date);
-			drugOrder.setDuration(date.toString());
 		}
 		
 		drugOrder.setVoided(new Boolean(false));
