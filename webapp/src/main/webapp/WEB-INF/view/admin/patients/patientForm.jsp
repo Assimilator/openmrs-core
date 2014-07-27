@@ -3,7 +3,10 @@
 <openmrs:require privilege="Edit Patients" otherwise="/login.htm" redirect="/admin/patients/patient.form"/>
 
 <%@ include file="/WEB-INF/template/header.jsp" %>
+
+<openmrs:hasPrivilege privilege="Delete Patients">
 <%@ include file="localHeader.jsp" %>
+</openmrs:hasPrivilege>
 
 <openmrs:htmlInclude file="/scripts/calendar/calendar.js" />
 <openmrs:htmlInclude file="/scripts/validation.js" />
@@ -266,8 +269,10 @@
 
 <c:if test="${patient.patientId != null}">
 	<a href="${pageContext.request.contextPath}/patientDashboard.form?patientId=${patient.patientId}"><openmrs:message code="patientDashboard.viewDashboard"/></a>
-	|
-	<a href="${pageContext.request.contextPath}/admin/patients/mergePatients.form?patientId=${patient.patientId}"><openmrs:message code="Patient.mergeThis"/></a><br/><br/>
+	<openmrs:hasPrivilege privilege="Delete Patients">
+	|<a href="${pageContext.request.contextPath}/admin/patients/mergePatients.form?patientId=${patient.patientId}"><openmrs:message code="Patient.mergeThis"/></a>
+	</openmrs:hasPrivilege>
+	<br/><br/>
 </c:if>
 
 <openmrs:hasPrivilege privilege="Delete Patients">

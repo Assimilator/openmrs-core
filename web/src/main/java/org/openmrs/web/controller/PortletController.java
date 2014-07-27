@@ -341,12 +341,22 @@ public class PortletController implements Controller {
 						
 						model.put("patientVariation", patientVariation);
 						//TODO: add the allergies thing here-ish; hanchar
-						List<Allergy> allergies = Context.getPatientService().getAllergies(p);
-						List<List<Allergy>> ls = separate(allergies);
-						model.put("allergies", ls.get(0));
-						model.put("removedAllergies", ls.get(1));
-						model.put("allergyTypes", AllergyType.values());
-						model.put("allergySeverities", AllergySeverity.values());
+						
+						if (Context.getAuthenticatedUser().hasPrivilege("View Allergies")) {
+							List<Allergy> allergies = Context.getPatientService().getAllergies(p);
+							List<List<Allergy>> ls = separate(allergies);
+							model.put("allergies", ls.get(0));
+							model.put("removedAllergies", ls.get(1));
+							model.put("allergyTypes", AllergyType.values());
+							model.put("allergySeverities", AllergySeverity.values());
+							
+						} else {
+							model.put("allergies", null);
+							model.put("removedAllergies", null);
+							model.put("allergyTypes", null);
+							model.put("allergySeverities", null);
+							
+						}
 						
 					}
 				}

@@ -113,6 +113,7 @@
 	</tr>
 </table>
 </div>
+<openmrs:hasPrivilege privilege="View Allergies,Patient Overview - View Allergies" >
 <c:if test="${empty model.patientReasonForExit}">
 	<div id="patientSubheader" class="box">
 </c:if>
@@ -384,7 +385,7 @@
 <div class="columnEnd"></div>
 
 </div> <!-- Closing div from c:if for model.patientReasonForExit above -->
-
+</openmrs:hasPrivilege>
 <script type="text/javascript">
 	function showMoreIdentifiers() {
 		if (identifierElement.style.display == '') {

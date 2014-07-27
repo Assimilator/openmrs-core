@@ -12,14 +12,7 @@
 </c:if>
 <c:if test="${not empty drugs}">
 	<input style="width:50%;" name="${formFieldName}" id="${formFieldName}" numId="0" <c:if test="${not empty onChange}">onChange=${onChange}</c:if> />
-	<script type="text/javascript">
-		//Save global references to jquery to avoid conflicts
-		var old_j = $j;
-		var old$ = $;	
-	</script>
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
-	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-	<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
 	<script type="text/javascript">
 		$j(document).ready(function() {
 
@@ -65,9 +58,5 @@
 			
 		});
 	</script>
-	<script type="text/javascript">
-		//Restore the jquery global variables.
-		$j = old_j;
-		$ = old$;
-	</script>
+
 </c:if>

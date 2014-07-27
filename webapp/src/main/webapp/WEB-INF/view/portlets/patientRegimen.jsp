@@ -16,7 +16,6 @@
 	}
 
 	.drugorder_title {
-		color:white;
 	    background-color: #2aacc4;
    		padding: 3px;
     	border: 0px;
@@ -330,7 +329,7 @@
 					var pattern =  /(^0|[^0-9])/;
 					
 					
-					if (!f || pattern.test(f) || !jQuery.isNumeric(f) || f <= 0 ) {
+					if (!f || pattern.test(f) || f <= 0 ) {
 						self.error.text(emsg);
 						self.error.show();
 						return false;
@@ -426,7 +425,7 @@
 				
 				d = new Date(self.start.field.val());
 				
-				if (!jQuery.isNumeric(d.getTime())) {
+				if (!d.getTime()) {
 					self.start.error.text("Select a valid start date");
 					self.start.error.show();
 					return false;					

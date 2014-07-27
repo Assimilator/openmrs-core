@@ -109,6 +109,7 @@
 	</div>
 </c:if>
 
+
 <openmrs:portlet url="patientHeader" id="patientDashboardHeader" patientId="${patient.patientId}"/>
 
 <openmrs:globalProperty var="enableFormEntryTab" key="FormEntry.enableDashboardTab" defaultValue="true"/>
