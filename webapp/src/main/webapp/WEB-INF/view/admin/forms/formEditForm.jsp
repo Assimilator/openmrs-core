@@ -8,12 +8,7 @@
 <h2><openmrs:message code="Form.edit.title"/></h2>
 
 <spring:hasBindErrors name="form">
-	<openmrs:message code="fix.error"/>
-	<div class="error">
-		<c:forEach items="${errors.allErrors}" var="error">
-			<openmrs:message code="${error.code}" text="${error.code}"/><br/><!-- ${error} -->
-		</c:forEach>
-	</div>
+    <openmrs_tag:errorNotify errors="${errors}" />
 </spring:hasBindErrors>
 
 <c:if test="${form.retired}">
@@ -82,10 +77,18 @@
 		<td><openmrs:message code="Encounter.type"/></td>
 		<td>
 			<spring:bind path="form.encounterType">
+				<c:set var="groupOpen" value="false" />
 				<select name="encounterType">
 					<c:forEach items="${encounterTypes}" var="type">
+						<c:if test="${type.retired && !groupOpen}">
+							<optgroup label="<openmrs:message code="Encounter.type.retired"/>">
+							<c:set var="groupOpen" value="true" />
+						</c:if>
 						<option value="${type.encounterTypeId}" <c:if test="${type.encounterTypeId == status.value}">selected</c:if>>${type.name}</option>
 					</c:forEach>
+					<c:if test="${groupOpen}">
+						</optgroup>
+					</c:if>
 				</select>
 				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 			</spring:bind>

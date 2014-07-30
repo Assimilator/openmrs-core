@@ -25,13 +25,7 @@
 </c:if>
 
 <spring:hasBindErrors name="location">
-	<openmrs:message code="fix.error"/>
-	<div class="error">
-		<c:forEach items="${errors.globalErrors}" var="error">
-			<openmrs:message code="${error.defaultMessage}" text="${error.defaultMessage}"/><br/><!-- ${error} -->
-		</c:forEach>
-	</div>
-	<br />
+    <openmrs_tag:errorNotify errors="${errors}" />
 </spring:hasBindErrors>
 <form method="post">
 <fieldset>
@@ -89,8 +83,12 @@
 				<spring:bind path="location.tags">
 					<input type="hidden" name="_tags"/>
 					<c:forEach var="t" items="${locationTags}">
-						<input type="checkbox" name="tags" value="${t.id}" <c:if test="${openmrs:collectionContains(status.value, t)}">checked="true"</c:if>/>
-						<openmrs:format locationTag="${t}"/>
+                        <c:if test="${openmrs:collectionContains(status.value, t) || !t.retired}">
+                            <span <c:if test="${t.retired}">class="retired"</c:if>>
+                                <input type="checkbox" name="tags" value="${t.id}" <c:if test="${openmrs:collectionContains(status.value, t)}">checked="true"</c:if>/>
+                                <openmrs:format locationTag="${t}"/>
+                            </span>
+                        </c:if>
 					</c:forEach>
 					<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 				</spring:bind>
