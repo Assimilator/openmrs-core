@@ -273,6 +273,8 @@ public class OptionsFormController extends SimpleFormController {
 		if (Context.isAuthenticated()) {
 			User user = Context.getAuthenticatedUser();
 			
+			user = Context.getUserService().getUser(user.getId());
+			
 			Map<String, String> props = user.getUserProperties();
 			opts.setDefaultLocation(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION));
 			opts.setDefaultLocale(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE));
@@ -309,7 +311,7 @@ public class OptionsFormController extends SimpleFormController {
 			LocationService ls = Context.getLocationService();
 			
 			// set location options
-			map.put("locations", ls.getAllLocations());
+			map.put("locations", ls.getAllLocations(false));
 			
 			// set language/locale options
 			map.put("languages", Context.getAdministrationService().getPresentationLocales());

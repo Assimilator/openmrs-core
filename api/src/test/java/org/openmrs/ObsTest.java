@@ -39,8 +39,9 @@ import org.openmrs.test.Verifies;
 public class ObsTest {
 	
 	private static final String FORM_NAMESPACE_PATH_SEPARATOR = "^";
+	
 	private static final String VERO = "Vero";
-		
+	
 	/**
 	 * Tests the addToGroup method in ObsGroup
 	 *
@@ -480,7 +481,8 @@ public class ObsTest {
 		final String path = FORM_NAMESPACE_PATH_SEPARATOR + "my path";
 		Obs obs = new Obs();
 		obs.setFormField("", path);
-
+	}
+	
 	@Test
 	@Verifies(value = "should return localized name of the value coded concept", method = "getValueAsString(Locale)")
 	public void getValueAsString_shouldReturnLocalizedCodedConcept() throws Exception {

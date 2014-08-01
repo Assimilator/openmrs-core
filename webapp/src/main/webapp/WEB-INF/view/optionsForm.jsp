@@ -127,6 +127,7 @@ function containsError(element) {
 <form method="post">
 
 <div id="optionsForm">
+<openmrs:hasPrivilege privilege="Edit_Users">
 <fieldset><legend><openmrs:message code="options.default.legend" /></legend>
 <table>
 	<tr>
@@ -202,7 +203,7 @@ function containsError(element) {
 <br /><br />
 <br />
 </fieldset>
-
+</openmrs:hasPrivilege>
 <fieldset><legend><openmrs:message code="options.login.legend" /></legend>
 <table>
 	<tr>

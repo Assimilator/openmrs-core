@@ -5,10 +5,53 @@
 <%@ include file="/WEB-INF/template/header.jsp" %>
 <%@ include file="localHeader.jsp" %>
 
+<c:if test="${empty user.userProperties['defaultLocation']}">
+	<c:set target="${user.userProperties}" property="defaultLocation" value="${authLocation} }"/>
+	</c:if>
+ 
 <c:set var="errorsFromPreviousSubmit" value="false"/>
 <spring:hasBindErrors name="user">
 	<c:set var="errorsFromPreviousSubmit" value="true"/>
 </spring:hasBindErrors>
+
+<script type="text/javascript">
+
+function ensure(bt, msg) {
+	var r = confirm(msg);
+	bt = $j(bt);
+	
+	if (!r)
+		return false;
+
+	if (bt.val() == "<openmrs:message code="User.save"/>")
+		if (!valideThisForm())
+			return false;
+			
+	bt.submit();
+}
+
+function valideThisForm () {
+	var pattern =  /(^0|[^0-9])/;
+	var v = $j("#select_defaultLocation").val();
+	$j("#userProp_defaultLocation").val(v);
+
+	if (!v || pattern.test(v) || v <= 0 ) {
+		alert("Please, choose a valid location id to this user.");
+		return false;
+	}
+
+	return true;
+};
+
+
+
+$j(document).ready(function () {
+	$j("select#select_defaultLocation").change(function() { 
+		$j("#userProp_defaultLocation").val($j(this).val());
+	});
+});
+
+</script>
 <c:choose>
 	<c:when test="${errorsFromPreviousSubmit == 'false' && empty param.userId && empty param.person_id && empty createNewPerson}">	
 		<script type="text/javascript">
@@ -18,7 +61,8 @@
 				} else {
 					document.getElementById('useExistingButton').disabled = true;
 				}
-			}
+			};
+			
 		</script>
 		<h2><openmrs:message code="User.title.add"/></h2>
 		<openmrs:message code="User.needsAPerson"/>
@@ -167,11 +211,8 @@
 			</tr>
 			
 			<tr><td colspan="2">&nbsp;</td></tr>
-			
-			<tr>
-				<td colspan="2"><a href="#Show Advanced" onclick="return toggleLayer('advancedOptions', this, '<openmrs:message code="User.showAdvancedOptions"/>', '<openmrs:message code="User.hideAdvancedOptions"/>')"><openmrs:message code="User.showAdvancedOptions"/></a></td>
-			</tr>
-			<tbody id="advancedOptions" style="display: none">
+
+			<tbody id="advancedOptions" >
 				<c:if test="${modifyPasswords == true}">
 					<tr>
 						<td><openmrs:message code="User.secretQuestion" /></td>
@@ -182,7 +223,7 @@
 						<td><input type="password" autocomplete="off" name="secretAnswer" size="50" value=""/> <i><openmrs:message code="general.optional"/></i></td>
 					</tr>
 				</c:if>
-			
+
 			<c:if test="${fn:length(user.userProperties) > 0}" >
 				<tr>
 					<td valign="top" colspan="2"><openmrs:message code="User.userProperties" /></td>
@@ -207,16 +248,28 @@
 											${userProp.key}:
 										</td>
 										<td valign="top">
-											<c:choose>
-												<c:when test="${fn:length(userProp.value) > 20}">
-													<textarea name="value" rows="1" cols="60"
-														wrap="off">${userProp.value}</textarea>
-												</c:when>
-												<c:otherwise>
-													<input type="text" name="value" value="${userProp.value}"
-														size="30" maxlength="4000" />
-												</c:otherwise>
-											</c:choose>
+											<c:if test="${userProp.key == 'defaultLocation'}" >
+												<input id="userProp_${userProp.key}" type="hidden" name="value" value="${userProp.value}" />
+												<select id="select_${userProp.key}">
+													<c:forEach items="${locations}" var="loc">
+														<option value="${loc.locationId}" <c:if test="${loc.locationId == userProp.value}">selected</c:if>>
+															${loc.name}
+														</option>
+													</c:forEach>
+												</select>
+											</c:if>
+											<c:if test="${userProp.key != 'defaultLocation'}" >
+												<c:choose>
+													<c:when test="${fn:length(userProp.value) > 20}">
+														<textarea id="userProp_${userProp.key}" name="value" rows="1" cols="60"
+															wrap="off">${userProp.value}</textarea>
+													</c:when>
+													<c:otherwise>
+														<input id="userProp_${userProp.key}" type="text" name="value" value="${userProp.value}"
+															size="30" maxlength="4000" />
+													</c:otherwise>
+												</c:choose>											
+											</c:if>
 										</td>
 									</tr>
 								</c:forEach>
@@ -271,18 +324,18 @@
 
 	<br/>
 	
-	<input type="submit" id="saveButton" name="action" value="<openmrs:message code="User.save"/>" />
+	<input type="submit" id="saveButton" name="action" value="<openmrs:message code="User.save"/>" onClick="return ensure(this, '<openmrs:message code="User.saveNewUser.confirm"/>');"/>
 	
 	<c:if test="${user.userId != null}">
 		<c:if test="${!user.retired}">
 		<openmrs:hasPrivilege privilege="Become User (Actually you need to be a superuser)">
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="submit" name="action" value="<openmrs:message code="User.assumeIdentity" />" onClick="return confirm('<openmrs:message code="User.assumeIdentity.confirm"/>');" />
+			<input type="submit" name="action" value="<openmrs:message code="User.assumeIdentity" />" onClick="return ensure(this, '<openmrs:message code="User.assumeIdentity.confirm"/>');" />
 		</openmrs:hasPrivilege>
 		</c:if>
 		<openmrs:hasPrivilege privilege="Delete User">
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="submit" name="action" value="<openmrs:message code="User.delete" />" onClick="return confirm('<openmrs:message code="User.delete.confirm"/>');" />
+			<input type="submit" name="action" value="<openmrs:message code="User.delete" />" onClick="return ensure(this, '<openmrs:message code="User.delete.confirm"/>');" />
 		</openmrs:hasPrivilege>
 	</c:if>
 </form>

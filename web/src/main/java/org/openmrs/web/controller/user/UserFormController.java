@@ -57,6 +57,8 @@ public class UserFormController {
 	
 	protected static final Log log = LogFactory.getLog(UserFormController.class);
 	
+	private static final String LOCATIONPROPERTY = "defaultLocation";
+	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Role.class, new RoleEditor());
@@ -102,6 +104,7 @@ public class UserFormController {
 	        @RequestParam(required = false, value = "createNewPerson") String createNewPerson,
 	        @ModelAttribute("user") User user, ModelMap model) {
 		
+		User authUser = Context.getUserService().getUser(Context.getAuthenticatedUser().getId());
 		// the formBackingObject method above sets up user, depending on userId and personId parameters   
 		
 		model.addAttribute("isNewUser", isNewUser(user));
@@ -113,6 +116,9 @@ public class UserFormController {
 		
 		if (!isNewUser(user))
 			model.addAttribute("changePassword", new UserProperties(user.getUserProperties()).isSupposedToChangePassword());
+		
+		model.addAttribute("locations", Context.getLocationService().getAllLocations(false));
+		model.addAttribute("authLocation", authUser.getUserProperty(LOCATIONPROPERTY));
 		
 		// not using the default view name because I'm converting from an existing form
 		return "admin/users/userForm";
@@ -256,6 +262,9 @@ public class UserFormController {
 			if (StringUtils.hasLength(secretQuestion) && StringUtils.hasLength(secretAnswer)) {
 				us.changeQuestionAnswer(user, secretQuestion, secretAnswer);
 			}
+			
+			if (user.getId() == Context.getAuthenticatedUser().getId())
+				Context.refreshAuthenticatedUser();
 			
 			httpSession.setAttribute(WebConstants.OPENMRS_MSG_ATTR, "User.saved");
 		}
