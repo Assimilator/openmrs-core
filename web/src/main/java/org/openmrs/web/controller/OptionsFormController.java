@@ -271,27 +271,32 @@ public class OptionsFormController extends SimpleFormController {
 		OptionsForm opts = new OptionsForm();
 		
 		if (Context.isAuthenticated()) {
-			User user = Context.getAuthenticatedUser();
+			try {
+				Context.addProxyPrivilege("View Users");
+				User user = Context.getAuthenticatedUser();
+				
+				user = Context.getUserService().getUser(user.getId());
+				
+				Map<String, String> props = user.getUserProperties();
+				opts.setDefaultLocation(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION));
+				opts.setDefaultLocale(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE));
+				opts.setProficientLocales(props.get(OpenmrsConstants.USER_PROPERTY_PROFICIENT_LOCALES));
+				opts.setShowRetiredMessage(new Boolean(props.get(OpenmrsConstants.USER_PROPERTY_SHOW_RETIRED)));
+				opts.setVerbose(new Boolean(props.get(OpenmrsConstants.USER_PROPERTY_SHOW_VERBOSE)));
+				opts.setUsername(user.getUsername());
+				opts.setSecretQuestionNew(user.getSecretQuestion());
+				// Get a copy of the current person name and clear the id so that
+				// they are separate objects
+				PersonName personName = PersonName.newInstance(user.getPersonName());
+				personName.setPersonNameId(null);
+				opts.setPersonName(personName);
+				opts.setNotification(props.get(OpenmrsConstants.USER_PROPERTY_NOTIFICATION));
+				opts.setNotificationAddress(props.get(OpenmrsConstants.USER_PROPERTY_NOTIFICATION_ADDRESS));
 			
-			user = Context.getUserService().getUser(user.getId());
-			
-			Map<String, String> props = user.getUserProperties();
-			opts.setDefaultLocation(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION));
-			opts.setDefaultLocale(props.get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE));
-			opts.setProficientLocales(props.get(OpenmrsConstants.USER_PROPERTY_PROFICIENT_LOCALES));
-			opts.setShowRetiredMessage(new Boolean(props.get(OpenmrsConstants.USER_PROPERTY_SHOW_RETIRED)));
-			opts.setVerbose(new Boolean(props.get(OpenmrsConstants.USER_PROPERTY_SHOW_VERBOSE)));
-			opts.setUsername(user.getUsername());
-			opts.setSecretQuestionNew(user.getSecretQuestion());
-			// Get a copy of the current person name and clear the id so that
-			// they are separate objects
-			PersonName personName = PersonName.newInstance(user.getPersonName());
-			personName.setPersonNameId(null);
-			opts.setPersonName(personName);
-			opts.setNotification(props.get(OpenmrsConstants.USER_PROPERTY_NOTIFICATION));
-			opts.setNotificationAddress(props.get(OpenmrsConstants.USER_PROPERTY_NOTIFICATION_ADDRESS));
+			} finally {
+				Context.removeProxyPrivilege("View Users");
+			}
 		}
-		
 		return opts;
 	}
 	
@@ -308,21 +313,27 @@ public class OptionsFormController extends SimpleFormController {
 		
 		if (Context.isAuthenticated()) {
 			
-			LocationService ls = Context.getLocationService();
+			try {
+				Context.addProxyPrivilege("View Users");
+				
+				LocationService ls = Context.getLocationService();
+				
+				// set location options
+				map.put("locations", ls.getAllLocations(false));
+				
+				// set language/locale options
+				map.put("languages", Context.getAdministrationService().getPresentationLocales());
+				
+				String resetPassword = (String) httpSession.getAttribute("resetPassword");
+				if (resetPassword == null)
+					resetPassword = "";
+				else
+					httpSession.removeAttribute("resetPassword");
+				map.put("resetPassword", resetPassword);
 			
-			// set location options
-			map.put("locations", ls.getAllLocations(false));
-			
-			// set language/locale options
-			map.put("languages", Context.getAdministrationService().getPresentationLocales());
-			
-			String resetPassword = (String) httpSession.getAttribute("resetPassword");
-			if (resetPassword == null)
-				resetPassword = "";
-			else
-				httpSession.removeAttribute("resetPassword");
-			map.put("resetPassword", resetPassword);
-			
+			} finally {
+				Context.removeProxyPrivilege("View Users");				
+			}
 		}
 		
 		return map;

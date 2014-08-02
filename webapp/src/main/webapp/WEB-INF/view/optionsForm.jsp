@@ -135,7 +135,6 @@ function containsError(element) {
 		<td>
 			<spring:bind path="opts.defaultLocation">
 				<select name="${status.expression}">
-					<option value=""></option>
 					<c:forEach items="${locations}" var="loc">
 						<option value="${loc.locationId}" <c:if test="${loc.locationId == status.value}">selected</c:if>>${loc.name}</option>
 					</c:forEach>
@@ -193,6 +192,55 @@ function containsError(element) {
 			<label for="${status.expression}"><spring:bind path="opts.verbose"></label>
 				<input type="hidden" name="_${status.expression}" value="true" />
 				<input type="checkbox" name="${status.expression}" value="true" id="${status.expression}" <c:if test="${status.value == true}">checked</c:if> />
+				<c:if test="${status.errorMessage != ''}">
+					<span class="error">${status.errorMessage}</span>
+				</c:if>
+			</spring:bind>
+		</td>
+	</tr>
+</table>
+<br /><br />
+<br />
+</fieldset>
+</openmrs:hasPrivilege>
+<openmrs:hasPrivilege privilege="Edit_Users" inverse="true">
+<fieldset><legend><openmrs:message code="options.default.legend" /></legend>
+<table>
+	<tr>
+		<td><openmrs:message code="options.default.location" /></td>
+		<td>
+			<spring:bind path="opts.defaultLocation">
+				<c:forEach items="${locations}" var="loc">
+					<c:if test="${loc.locationId == status.value}">
+						<span>${loc.name}</span>
+					</c:if>
+				</c:forEach>
+			</spring:bind>
+		</td>
+	</tr>
+	<tr>
+		<td><openmrs:message code="options.default.locale" /></td>
+		<td>
+			<spring:bind path="opts.defaultLocale">
+				<select name="${status.expression}">
+					<option value=""></option>
+					<c:forEach items="${languages}" var="locale">
+						<option value="${locale}" <c:if test="${locale == status.value}">selected</c:if>>${locale.displayName}</option>
+					</c:forEach>
+				</select>
+				<c:if test="${status.errorMessage != ''}">
+					<span class="error">${status.errorMessage}</span>
+				</c:if>
+			</spring:bind>
+		</td>
+	</tr>
+	<tr>
+		<td><openmrs:message code="options.proficient.locales" /></td>
+		<td>
+			<spring:bind path="opts.proficientLocales">
+				<input type="text" name="${status.expression}" value="${status.value}" 
+					size="35" />
+				<span class="description">example: "en_US, en_GB, en, fr_RW"</span>
 				<c:if test="${status.errorMessage != ''}">
 					<span class="error">${status.errorMessage}</span>
 				</c:if>

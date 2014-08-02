@@ -294,6 +294,11 @@ public class ModuleUtil {
 					}
 				}
 			}
+		} else if (versionRange.equals("")) {
+			//Back compatibility for role based homepage
+			log.debug("Using module back-compatibility can result on unexpected behaviour.");
+			log.warn("Using module back-compatibility can result on unexpected behaviour.");
+			return true;
 		}
 		return false;
 	}
