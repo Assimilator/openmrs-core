@@ -366,6 +366,9 @@
 		</spring:hasBindErrors>
 		<div id="pAddresses">
 			<div class="tabBar" id="pAddressesTabBar">
+
+
+
 				<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
 					<a href="javascript:return false;" onClick="return selectTab(this, 'address');" id="address${varStatus.index}" <c:if test="${address.voided}">class='voided'</c:if>><span>${address.cityVillage}</span>&nbsp;</a>
 				</c:forEach>
@@ -373,6 +376,11 @@
 				<input type="button" onClick="return addNew('address');" class="addNew" id="address" value='<openmrs:message code="Patient.addNewAddress"/>'/>			
 			</div>
 			<div class="tabBoxes" id="addressDataBoxes">
+
+
+
+
+
 				<c:forEach var="address" items="${patient.addresses}" varStatus="varStatus">
 					<spring:nestedPath path="patient.addresses[${varStatus.index}]">
 						<div id="address${varStatus.index}Data" class="tabBox">

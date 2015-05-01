@@ -245,6 +245,7 @@
 				<prop key="**/*.field">fieldGenController</prop>
 				<prop key="**/*.htm">springController</prop>
 
+
 				<prop key="admin/visits/visitType.list">visitTypeList</prop>
 				<prop key="admin/visits/visitType.form">visitTypeForm</prop>
 				<prop key="admin/visits/visitAttributeType.list">visitAttributeTypeList</prop>
@@ -940,6 +941,7 @@
 		<property name="successView"><value>forgotPassword.form</value></property>
 	</bean>
 
+
 	<!-- ** Visit Type ** -->
 	<bean id="visitTypeList"
 		class="org.openmrs.web.controller.visit.VisitTypeListController">
@@ -1084,6 +1086,9 @@
 				<prop key="org.openmrs.Location">
 					org.openmrs.web.taglib.fieldgen.LocationHandler
 				</prop>
+                <prop key="org.openmrs.Landmark">
+                    org.openmrs.web.taglib.fieldgen.LandmarkHandler
+                </prop>
 				<prop key="org.openmrs.ProgramWorkflow">
 					org.openmrs.web.taglib.fieldgen.ProgramWorkflowHandler
 				</prop>

@@ -78,7 +78,19 @@
 
 		<property name="preferred" type="boolean" column="preferred"
 			length="1" not-null="true" />
-		
+
+        <property name="optout" type="boolean" column="optOut"
+                  length="1" not-null="true" />
+
+        <property name="optOutReason" column="optOutReason" length="50" >
+            <type name="org.openmrs.util.HibernateEnumType">
+                <param name="enumClassName">org.openmrs.activelist.OptOutReason</param>
+            </type>
+        </property>
+
+        <property name="optOutComment" type="java.lang.String"
+                  column="optOutComment" length="255" />
+
 		<many-to-one name="changedBy" class="User" column="changed_by" />
 
 		<property name="dateChanged" type="java.util.Date" column="date_changed" length="19" />

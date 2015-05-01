@@ -97,6 +97,20 @@
     		}
         }
     }
+
+    function triggerOptOut() {
+        var optOut = document.getElementById("optOut");
+        if (optOut.checked) {
+            document.getElementById("optOutReason").disabled = false;
+            document.getElementById("optOutComment").disabled = false;
+        } else {
+            document.getElementById("optOutReason").disabled = true;
+            document.getElementById("optOutComment").disabled = true;
+            document.getElementById("optOutComment").value = "";
+
+        }
+    }
+
 </script>
 
 <c:if test="${model.authenticatedUser != null}">
@@ -201,51 +215,91 @@
 								</td>
 							</tr>
 					</c:if>
+					<c:if test="${true}">
+                        <tr>
+                            <td>Opt Out</td>
+                            <td>
+                                <spring:bind path="optout">
+                                    <input type="hidden" name="_${status.expression}"/>
+                                    <input type="checkbox" name="${status.expression}" id="optOut"
+                                           <c:if test="${status.value == true}">checked="checked"</c:if> onclick="triggerOptOut()"/>
+                                </spring:bind>
+                            </td>
+                            <td>Reason:
+                                <spring:bind path="optOutReason">
+                                    <input type="hidden" name="_${status.expression}"/>
+                                    <select name="${status.expression}" id="optOutReason">
+                                        <c:forEach items="${model.optOutReasons}" var="reason">
+                                            <option value="${reason}" <c:if test="${reason == status.value}">selected</c:if>>
+                                                <c:if test="${reason == 'NO_ADDRESS'}">NO ADDRESS</c:if>
+                                                <c:if test="${reason != 'NO_ADDRESS'}">${reason}</c:if>
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </spring:bind>
+                                Comments:
+                                <spring:bind path="optOutComment">
+                                    <input type="hidden" name="_${status.expression}"/>
+                                    <input type="textbox" name="${status.expression}" id="optOutComment" value="${status.value}"/>
+                                </spring:bind>
+                                <script type="text/javascript">triggerOptOut();</script>
+                            </td
+                        </tr>
+					</c:if>
 					<tr style="display:none">
 						<td><openmrs:message code="PersonAddress.isActive" /></td>
 						<td>
 							<input name="activeCheckbox" type="checkbox" checked="checked"/>
 						</td>
 					</tr>
+
 					<c:forEach items="${model.layoutTemplate.lines}" var="line">
 						<tr>
 							<c:forEach items="${line}" var="token" varStatus="tokenStatus">
 								<c:if test="${token.isToken == model.layoutTemplate.layoutToken}">
 									<td id="${token.codeName}_label"><openmrs:message code="${token.displayText}" /></td>
 									<td <c:if test="${tokenStatus.last && tokenStatus.index < model.layoutTemplate.maxTokens}">colspan="${model.layoutTemplate.maxTokens - tokenStatus.index}"</c:if>>
-									<c:catch var="exp">
-										<spring:bind path="${token.codeName}">
-											<c:if test="${token.codeName == 'endDate'}"><input type="hidden" name="_${status.expression}"></c:if>
-											<input id="${status.expression}" type="text" name="${status.expression}" value="<c:out value="${status.value}"/>" size="${token.displaySize}" 
-                                            	<c:if test="${token.codeName == 'startDate' || token.codeName == 'endDate'}">onfocus='showCalendar(this,60)'</c:if> 
-                                            	<c:if test="${token.codeName == 'endDate' && status.value == ''}">disabled="disabled" </c:if>
-                                                onkeyup="<c:if test='${model.layoutTemplate.elementRegex[token.codeName] !="" }'>validateFormat(this, '${model.layoutTemplate.elementRegex[token.codeName]}','${token.codeName}' )</c:if>"
-                                            />
-                                            <c:if test="${token.codeName == 'endDate'}">
-                                            <script type="text/javascript">updateActiveCheckbox('${status.expression}', ${status.value == ''});</script>
+                                        <c:catch var="exp">
+                                           <spring:bind path="${token.codeName}">
+                                                <c:if test="${token.codeName == 'endDate'}"><input type="hidden" name="_${status.expression}"></c:if>
+                                                <c:if test="${token.codeName == 'address2'}"></c:if>
+
+                                                <!--    This is the most important part of the whole portlet - here an automatically generated Field gets added to the page
+                                                        Look up address template for details    -->
+                                                <input id="${status.expression}" type="text" name="${status.expression}" value="<c:out value="${status.value}"/>" size="${token.displaySize}"
+                                                    <c:if test="${token.codeName == 'startDate' || token.codeName == 'endDate'}">onfocus='showCalendar(this,60)'</c:if>
+                                                    <c:if test="${token.codeName == 'endDate' && status.value == ''}">disabled="disabled" </c:if>
+                                                    onkeyup="<c:if test='${model.layoutTemplate.elementRegex[token.codeName] !="" }'>validateFormat(this, '${model.layoutTemplate.elementRegex[token.codeName]}','${token.codeName}' )</c:if>"
+                                                />
+                                                <c:if test="${token.codeName == 'endDate'}">
+                                                    <script type="text/javascript">updateActiveCheckbox('${status.expression}', ${status.value == ''});</script>
+                                                </c:if>
+                                                <i name="formatMsg_${token.codeName}" style="font-weight: normal; font-size: xx-small; color: red; display: none">
+
+                                                    <c:choose>
+                                                        <c:when test="${model.layoutTemplate.elementRegexFormats[token.codeName] != null }" >
+                                                            (<openmrs:message code="general.format" />: ${model.layoutTemplate.elementRegexFormats[token.codeName]})
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <openmrs:message code="general.invalid" />&nbsp;<openmrs:message code="general.format" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </i>
+                                                <c:if test="${model.layoutShowErrors != 'false'}">
+                                                    <c:if test="${status.errorMessage != ''}">
+                                                        <span class="error">${status.errorMessage}</span>
+                                                    </c:if>
+                                                </c:if>
+                                            </spring:bind>
+
+                                        </c:catch>
+                                        <c:if test="${not empty exp}">
+                                            <%--hide the label for the token's field since we are not displaying the input for this missng property --%>
+                                            <script>$j("#${token.codeName}_label").hide()</script>
+                                            <c:if test="${model.layoutShowErrors == true}">
+                                                <span class="error">${exp.message}</span>
                                             </c:if>
-                                           <i name="formatMsg_${token.codeName}" style="font-weight: normal; font-size: xx-small; color: red; display: none">
-                                                 <c:choose>
-                                                     <c:when test="${model.layoutTemplate.elementRegexFormats[token.codeName] != null }" >
-                                                        (<openmrs:message code="general.format" />: ${model.layoutTemplate.elementRegexFormats[token.codeName]})
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <openmrs:message code="general.invalid" />&nbsp;<openmrs:message code="general.format" />
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </i>
-											<c:if test="${model.layoutShowErrors != 'false'}">
-												<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-											</c:if>
-										</spring:bind>
-									  </c:catch>
-									  <c:if test="${not empty exp}">
-									  	<%--hide the label for the token's field since we are not displaying the input for this missng property --%>
-									  	<script>$j("#${token.codeName}_label").hide()</script>
-									  	<c:if test="${model.layoutShowErrors == true}">
-											<span class="error">${exp.message}</span>
-									  	</c:if>
-									  </c:if>
+                                        </c:if>
 									</td>
 								</c:if>
 								<c:if test="${token.isToken == model.layoutTemplate.nonLayoutToken}">

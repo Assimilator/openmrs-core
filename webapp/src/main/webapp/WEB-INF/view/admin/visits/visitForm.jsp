@@ -144,13 +144,15 @@ $j(document).ready( function() {
 	</c:if>
 	<br/><br/>
 	</c:if>
-	
+	<c:if test="${locationConflict}">
+	<h4>This visit does not belong to your location, so you will not be able to save any changes</h4>
+	</c:if>
 <b class="boxHeader"><openmrs:message code="Visit.details"/></b>
 <div class="box">
 
 	<c:if test="${visit.visitId != null}">
 		<div style="float: right">
-			<c:if test="${visit.stopDatetime == null}">
+			<c:if test="${visit.stopDatetime == null && !locationConflict}">
 		        <openmrs:hasPrivilege privilege="Edit Visits">
 					<input type="button" value="<openmrs:message code="Visit.end"/>" onclick="javascript:$j('#endvisit-dialogue').dialog('open');	" /> 
 				</openmrs:hasPrivilege>
@@ -233,10 +235,15 @@ $j(document).ready( function() {
 		<tr>
 			<th><openmrs:message code="Visit.location"/></th>
 			<td>
-				<spring:bind path="location">
-				<openmrs_tag:locationField formFieldName="${status.expression}" initialValue="${status.value}"/>
-				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-				</spring:bind>
+				<openmrs:hasPrivilege privilege="Edit_Locations">
+				    <spring:bind path="location">
+                        <openmrs_tag:locationField formFieldName="${status.expression}" initialValue="${status.value}"/>
+                        <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                    </spring:bind>
+                </openmrs:hasPrivilege>
+                <openmrs:hasPrivilege privilege="Edit_Locations" inverse="true">
+                    <c:if test="${visit.location != null}">${visit.location}</c:if>
+                </openmrs:hasPrivilege>
 			</td>
 		</tr>
 		<tr>
@@ -326,7 +333,9 @@ $j(document).ready( function() {
 
 <br/>
 
-<input type="submit" value='<openmrs:message code="general.save" />' /></td>
+<c:if test="${!locationConflict}">
+<input type="submit" value='<openmrs:message code="general.save" />' /></c:if>
+</td>
 <c:set var="cancelUrl" value="${pageContext.request.contextPath}/admin" scope="page"></c:set>
 <c:if test="${not empty param.patientId}">
 	<c:set var="cancelUrl" value="${pageContext.request.contextPath}/patientDashboard.form?patientId=${param.patientId}" />
@@ -392,7 +401,7 @@ $j(document).ready( function() {
 					<input type="hidden" name="visitId" value="${visit.visitId}" />
 					<openmrs:message code="Visit.enterEndDate"/>
 					<jsp:useBean id="now" class="java.util.Date" scope="page" />
-					<input type="text" id="enddate_visit" size="20" name="stopDate" value="<openmrs:formatDate date="${now}" format="dd/MM/yyyy HH:mm"/>" onClick="showDateTimePicker(this)" readonly="readonly"/></br>&nbsp;&nbsp;
+					<input type="text" id="enddate_visit" size="20" name="stopDate" value="<openmrs:formatDate date="${now}" format="MM/dd/yyyy hh:mm a"/>" onClick="showDateTimePicker(this)" readonly="readonly"/></br>&nbsp;&nbsp;
 				</td>
 			</tr>
 			<tr height="20"></tr>

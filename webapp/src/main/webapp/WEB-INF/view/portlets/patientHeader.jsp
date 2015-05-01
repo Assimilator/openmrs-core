@@ -252,7 +252,7 @@
 							<input type="hidden" name="visitId" value="" />
 							<openmrs:message code="Visit.enterEndDate"/>
 							<jsp:useBean id="now" class="java.util.Date" scope="page" />
-							<input type="text" id="enddate_visit" size="20" name="stopDate" value="<openmrs:formatDate date="${now}" format="dd/MM/yyyy HH:mm"/>" onClick="showDateTimePicker(this)" readonly="readonly"/></br>&nbsp;&nbsp;
+							<input type="text" id="enddate_visit" size="20" name="stopDate" value="<openmrs:formatDate date="${now}" format="MM/dd/yyyy hh:mm a"/>" onClick="showDateTimePicker(this)" readonly="readonly"/></br>&nbsp;&nbsp;
 						</td>
 					</tr>
 					<tr height="20"></tr>
@@ -281,9 +281,9 @@
 			});
 			function patientHeaderEndVisit(visitId, stopVisitDate) {
 				$j("input[name=visitId]", "#patientHeader-endvisit-dialog").val(visitId);
-				if (stopVisitDate) {
-					$j("input[name=stopDate]", "#patientHeader-endvisit-dialog").val(stopVisitDate);
-				}
+				//if (stopVisitDate) {
+				//	$j("input[name=stopDate]", "#patientHeader-endvisit-dialog").val(stopVisitDate);
+				//}
 				$j('#patientHeader-endvisit-dialog').dialog('open');
 			}
 		</script>
@@ -325,7 +325,7 @@
 							</c:url>
 						</c:when>
 					</c:choose>
-					<a href="${viewEncounterUrl}">
+					<a href="${viewEncounterUrl}" <c:if test="${encounter.voided == true}">style="display:none"</c:if>>
 						<openmrs:format encounterType="${encounter.encounterType}" /></a><c:if test="${not status.last}">,</c:if>
 				</c:forEach>
 				

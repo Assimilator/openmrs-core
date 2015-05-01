@@ -91,16 +91,16 @@ tr.bottom-encounter-in-visit td:last-child {
 												"bVisible" : false
 											}, {
 												"bVisible" : false
-											}, null, null, null, null, null, null, {
+											}, null, null, null, null, null, null, null, null, {//Added 2 cols here to keep track of the Referred From data
 												"bVisible" : false
 											} ],
 											"fnRowCallback" : function(nRow,
 													aData, iDisplayIndex) {
-												var encounterId = aData[9];
+												var encounterId = aData[10];//Originally was 9, but had to increment to accommodate the insert of Referred from/to location columns
 												if (encounterId != '') {
 													//Changes the action column
 													var actions = '';
-													var encounterURL = aData[15];
+													var encounterURL = aData[17];//Originally was 15, but had to increment to accommodate the insert of Referred from/to location columns
 
 													var viewImg = '<img src="${pageContext.request.contextPath}/images/file.gif" title="<openmrs:message code="general.view"/>" />';
 													actions = actions
@@ -258,8 +258,10 @@ tr.bottom-encounter-in-visit td:last-child {
 									code="Encounter.type" /></th>
 							<th class="encounterProvidersHeader"><openmrs:message
 									code="Encounter.providers" /></th>
+							<th class="visitReferredFromHeader">Referred From</th>
 							<th class="encounterLocationHeader"><openmrs:message
 									code="Encounter.location" /></th>
+							<th class="visitReferredToHeader">Referred To</th>
 							<th class="encounterEntererHeader"><openmrs:message
 									code="Encounter.enterer" /></th>
 							<th class="encounterViewURLHeader"></th>

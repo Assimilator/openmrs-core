@@ -36,28 +36,7 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.User;
-import org.openmrs.api.APIException;
-import org.openmrs.api.ActiveListService;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.CohortService;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.DataSetService;
-import org.openmrs.api.DatatypeService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.ObsService;
-import org.openmrs.api.OpenmrsService;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.PatientSetService;
-import org.openmrs.api.PersonService;
-import org.openmrs.api.ProgramWorkflowService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.ReportService;
-import org.openmrs.api.SerializationService;
-import org.openmrs.api.UserService;
-import org.openmrs.api.VisitService;
+import org.openmrs.api.*;
 import org.openmrs.api.db.ContextDAO;
 import org.openmrs.arden.ArdenService;
 import org.openmrs.hl7.HL7Service;
@@ -383,6 +362,13 @@ public class Context {
 	 */
 	public static LocationService getLocationService() {
 		return getServiceContext().getLocationService();
+	}
+	
+	/**
+	 * @return landmark services
+	 */
+	public static LandmarkService getLandmarkService() {
+		return getServiceContext().getLandmarkService();
 	}
 	
 	/**
@@ -1261,7 +1247,7 @@ public class Context {
 	
 	/**
 	 * @since 1.9
-	 * @see ServiceCotext#getDatatypeService()
+	 * @see ServiceContext#getDatatypeService()
 	 */
 	public static DatatypeService getDatatypeService() {
 		return getServiceContext().getDatatypeService();

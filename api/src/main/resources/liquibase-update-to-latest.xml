@@ -6529,4 +6529,35 @@
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="20150423-Landmark" author="Serhei Luchianov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="landmark"/>
+            </not>
+        </preConditions>
+        <comment>
+            Create the landmark table
+        </comment>
+        <createTable tableName="landmark">
+            <column name="landmark_id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="latitude" type="varchar(50)"/>
+            <column name="longitude" type="varchar(50)"/>
+            <column name="creator" type="int(11)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_created" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="retired" type="tinyint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retired_by" type="int(11)" />
+            <column name="date_retired" type="datetime" />
+            <column name="retired_reason" type="varchar(255)" defaultValue="null"/>
+            <column name="uuid" type="char(38)" />
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

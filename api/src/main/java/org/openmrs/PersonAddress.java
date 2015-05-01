@@ -27,6 +27,8 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+import org.openmrs.activelist.OptOutReason;
+
 import static org.apache.commons.lang.StringUtils.defaultString;
 
 /**
@@ -45,6 +47,12 @@ public class PersonAddress extends BaseOpenmrsData implements java.io.Serializab
 	private Integer personAddressId;
 	
 	private Person person;
+	
+	private Boolean optout = false;
+	
+	private OptOutReason optOutReason;
+	
+	private String optOutComment;
 	
 	private Boolean preferred = false;
 	
@@ -227,6 +235,56 @@ public class PersonAddress extends BaseOpenmrsData implements java.io.Serializab
 	@Attribute(required = true)
 	public void setPreferred(Boolean preferred) {
 		this.preferred = preferred;
+	}
+	
+	/**
+	 * @return Returns the optout.
+	 */
+	@Attribute(required = true)
+	public Boolean getOptout() {
+		if (optout == null)
+			return false;
+		return optout;
+	}
+	
+	/**
+	 * @param optout The optout to set.
+	 */
+	@Attribute(required = true)
+	public void setOptout(Boolean optout) {
+		this.optout = optout;
+	}
+	
+	/**
+	 * @return Returns the optoutReason.
+	 */
+	@Attribute(required = true)
+	public OptOutReason getOptOutReason() {
+		return optOutReason;
+	}
+	
+	/**
+	 * @param optOutReason The optoutReason to set.
+	 */
+	@Attribute(required = true)
+	public void setOptOutReason(OptOutReason optOutReason) {
+		this.optOutReason = optOutReason;
+	}
+	
+	/**
+	 * @return Returns the optoutComment.
+	 */
+	@Attribute(required = true)
+	public String getOptOutComment() {
+		return optOutComment;
+	}
+	
+	/**
+	 * @param optOutComment The optoutComment to set.
+	 */
+	@Attribute(required = true)
+	public void setOptOutComment(String optOutComment) {
+		this.optOutComment = optOutComment;
 	}
 	
 	/**

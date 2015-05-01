@@ -104,6 +104,14 @@ public class PrivilegeConstants {
 	
 	public static final String PURGE_LOCATIONS = "Purge Locations";
 	
+	@AddOnStartup(description = "Able to view landmarks")
+	public static final String VIEW_LANDMARKS = "View Landmarks";
+	
+	@AddOnStartup(description = "Able to add/edit/delete landmarks")
+	public static final String MANAGE_LANDMARKS = "Manage Landmarks";
+	
+	public static final String PURGE_LANDMARKS = "Purge Landmarks";
+	
 	@AddOnStartup(description = "Able to add/edit/delete location tags")
 	public static final String MANAGE_LOCATION_TAGS = "Manage Location Tags";
 	

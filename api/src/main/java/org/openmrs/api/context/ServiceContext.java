@@ -25,28 +25,7 @@ import java.util.Set;
 import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.APIException;
-import org.openmrs.api.ActiveListService;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.CohortService;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.DataSetService;
-import org.openmrs.api.DatatypeService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.ObsService;
-import org.openmrs.api.OpenmrsService;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.PatientSetService;
-import org.openmrs.api.PersonService;
-import org.openmrs.api.ProgramWorkflowService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.ReportService;
-import org.openmrs.api.SerializationService;
-import org.openmrs.api.UserService;
-import org.openmrs.api.VisitService;
+import org.openmrs.api.*;
 import org.openmrs.arden.ArdenService;
 import org.openmrs.hl7.HL7Service;
 import org.openmrs.logic.LogicService;
@@ -192,6 +171,13 @@ public class ServiceContext implements ApplicationContextAware {
 	 */
 	public LocationService getLocationService() {
 		return getService(LocationService.class);
+	}
+	
+	/**
+	 * @return landmark services
+	 */
+	public LandmarkService getLandmarkService() {
+		return getService(LandmarkService.class);
 	}
 	
 	/**
@@ -390,6 +376,13 @@ public class ServiceContext implements ApplicationContextAware {
 	 */
 	public void setLocationService(LocationService locationService) {
 		setService(LocationService.class, locationService);
+	}
+	
+	/**
+	 * @param landmarkService the LocationService to set
+	 */
+	public void setLandmarkService(LocationService landmarkService) {
+		setService(LandmarkService.class, landmarkService);
 	}
 	
 	/**

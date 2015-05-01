@@ -13,21 +13,13 @@
  */
 package org.openmrs.web.controller.visit;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.util.Logger;
-import org.openmrs.Encounter;
-import org.openmrs.Form;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.controller.PortletControllerUtil;
@@ -90,13 +82,24 @@ public class VisitListController {
 		
 		response.setsColumns("visitId", "visitActive", "visitType", "visitLocation", "visitFrom", "visitTo",
 		    "visitIndication", "firstInVisit", "lastInVisit", "encounterId", "encounterDate", "encounterType",
-		    "encounterProviders", "encounterLocation", "encounterEnterer", "formViewURL");
+		    "encounterProviders", "visitReferredFrom", "encounterLocation", "visitReferredTo", "encounterEnterer",
+		    "formViewURL");
 		
 		for (Encounter encounter : encounters) {
 			Map<String, String> row = new HashMap<String, String>();
 			
 			if (encounter.getVisit() != null) {
 				Visit visit = encounter.getVisit();
+				Set<VisitAttribute> attributeSet = visit.getAttributes();
+				if (!attributeSet.isEmpty()) {
+					for (VisitAttribute object : attributeSet) {
+						if (object.getAttributeType().getId() == 2) {//Checking if TypeId belongs to the referral TypeId
+							row.put("visitReferredFrom", object.getValue().toString()); //Here we add visit ReferredFrom data
+						}
+					}
+				} else {
+					row.put("visitReferredFrom", ""); //Here we add empty visit ReferredFrom data
+				}
 				row.put("visitId", visit.getId().toString());
 				row.put("visitActive", Boolean.toString(isActive(visit.getStartDatetime(), visit.getStopDatetime())));
 				row.put("visitType", visit.getVisitType().getName());
@@ -134,6 +137,23 @@ public class VisitListController {
 				row.put("encounterEnterer", (encounter.getCreator() != null) ? encounter.getCreator().getPersonName()
 				        .toString() : "");
 				row.put("formViewURL", getViewFormURL(request, formToViewUrlMap, formToEditUrlMap, encounter));
+				
+				//Getting referrals to some other clinics
+				Set<Obs> observationSet = encounter.getAllObs();
+				if (!observationSet.isEmpty()) {
+					String spacer = " ";
+					String referralsOut = "";
+					for (Obs obj : observationSet) {
+						if (obj.getConcept().getId() == 1272) {//Checking if TypeId belongs to the referral TypeId
+							referralsOut += spacer
+							        + Context.getConceptService().getConcept(obj.getValueCoded().getConceptId()).getName();//adding each stored referral to the display string
+							spacer = ", ";
+						}
+					}
+					row.put("visitReferredTo", referralsOut); //Here we add empty visit ReferredFrom data
+				} else {
+					row.put("visitReferredTo", ""); //Here we add empty visit ReferredFrom data
+				}
 			}
 			
 			response.addRow(row);

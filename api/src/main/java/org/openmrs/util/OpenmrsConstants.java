@@ -325,6 +325,15 @@ public final class OpenmrsConstants {
 	public static final String PRIV_PURGE_LOCATIONS = PrivilegeConstants.PURGE_LOCATIONS;
 	
 	@Deprecated
+	public static final String PRIV_VIEW_LANDMARKS = PrivilegeConstants.VIEW_LANDMARKS;
+	
+	@Deprecated
+	public static final String PRIV_MANAGE_LANDMARKS = PrivilegeConstants.MANAGE_LANDMARKS;
+	
+	@Deprecated
+	public static final String PRIV_PURGE_LANDMARKS = PrivilegeConstants.PURGE_LANDMARKS;
+	
+	@Deprecated
 	public static final String PRIV_MANAGE_LOCATION_TAGS = PrivilegeConstants.MANAGE_LOCATION_TAGS;
 	
 	@Deprecated

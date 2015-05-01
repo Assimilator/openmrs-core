@@ -20,10 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.activelist.AllergyType;
 import org.openmrs.api.context.Context;
 import org.openmrs.layout.web.LayoutSupport;
 import org.openmrs.layout.web.LayoutTemplate;
 import org.openmrs.web.controller.PortletController;
+
+import org.openmrs.activelist.OptOutReason;
 
 public abstract class LayoutPortletController extends PortletController {
 	
@@ -77,6 +80,7 @@ public abstract class LayoutPortletController extends PortletController {
 				model.put("portletDivId", getDefaultDivId());
 			}
 			
+			model.put("optOutReasons", OptOutReason.values());
 			model.put("layoutTemplate", layoutTemplate);
 			model.put("layoutTemplateName", templateName);
 			model.put("cachedLayoutName", thisLayoutName);

@@ -25,11 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Encounter;
-import org.openmrs.Visit;
-import org.openmrs.VisitAttribute;
-import org.openmrs.VisitAttributeType;
-import org.openmrs.VisitType;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -52,6 +48,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
+
+import org.openmrs.util.OpenmrsConstants;
 
 /**
  * Controller class for creating, editing, deleting, restoring and purging a visit
@@ -79,11 +77,28 @@ public class VisitFormController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = VISIT_FORM_URL)
 	public String showForm(@ModelAttribute("visit") Visit visit,
-	        @RequestParam(required = false, value = "startNow") Boolean startNow, ModelMap model) {
+	        @RequestParam(required = false, value = "startNow") Boolean startNow,
+	        @RequestParam(required = false, value = "patientId") Integer patientId, ModelMap model) {
 		if (startNow != null && startNow && visit.getStartDatetime() == null)
 			visit.setStartDatetime(new Date());
 		if (visit.getVisitId() != null)
 			model.addAttribute("canPurgeVisit", Context.getEncounterService().getEncountersByVisit(visit, true).size() == 0);
+		if (patientId != null)
+			visit.setPatient(Context.getPatientService().getPatient(patientId));
+		
+		User user = Context.getAuthenticatedUser();
+		if (visit.getLocation() != null) {
+			Location testLoc = Context.getLocationService().getLocation(
+			    Integer.parseInt(user.getUserProperties().get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION)));
+			if (visit.getLocation() == testLoc || user.isSuperUser()) {
+				model.addAttribute("locationConflict", false);
+			} else {
+				model.addAttribute("locationConflict", true);
+			}
+		} else {
+			visit.setLocation(Context.getLocationService().getLocation(
+			    Integer.parseInt(user.getUserProperties().get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION))));
+		}
 		
 		addEncounterAndObservationCounts(visit, null, model);
 		return VISIT_FORM;
@@ -100,6 +115,7 @@ public class VisitFormController {
 			if (patientId != null)
 				visit.setPatient(Context.getPatientService().getPatient(patientId));
 		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////<====================
 		return visit;
 	}
 	
