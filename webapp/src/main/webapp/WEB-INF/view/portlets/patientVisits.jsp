@@ -103,11 +103,17 @@ tr.bottom-encounter-in-visit td:last-child {
 													var encounterURL = aData[17];//Originally was 15, but had to increment to accommodate the insert of Referred from/to location columns
 
 													var viewImg = '<img src="${pageContext.request.contextPath}/images/file.gif" title="<openmrs:message code="general.view"/>" />';
-													actions = actions
-															+ ' <a href="'
-															+ encounterURL
-															+ '">'
-															+ viewImg + '</a>';
+													if (encounterURL == "False")
+													{
+													    //Do nothing and actions will remain an empty String
+
+                                                    }else{
+                                                        actions = actions
+                                                                + ' <a href="'
+                                                                + encounterURL
+                                                                + '">'
+                                                                + viewImg + '</a>';
+                                                    }
 
 													$j('td:eq(1)', nRow).html(
 															actions);

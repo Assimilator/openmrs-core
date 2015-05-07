@@ -132,215 +132,284 @@ $j(document).ready( function() {
 </c:if>
 
 <form:form method="post" action="visit.form" modelAttribute="visit">
-	<c:if test="${visit.patient.patientId != null}">
-	<a href="<openmrs:contextPath/>/patientDashboard.form?patientId=${visit.patient.patientId}">
-		<openmrs:message code="PatientDashboard.backToPatientDashboard"/>
-	</a>
-	<c:if test="${param.visitId != null}">
-		<input type="hidden" name="visitId" value="${param.visitId}"/>
-	</c:if>
-	<c:if test="${param.patientId != null}">
-		<input type="hidden" name="patientId" value="${param.patientId}"/>
-	</c:if>
-	<br/><br/>
-	</c:if>
-	<c:if test="${locationConflict}">
-	<h4>This visit does not belong to your location, so you will not be able to save any changes</h4>
-	</c:if>
-<b class="boxHeader"><openmrs:message code="Visit.details"/></b>
-<div class="box">
+        <c:if test="${visit.patient.patientId != null}">
+            <a href="<openmrs:contextPath/>/patientDashboard.form?patientId=${visit.patient.patientId}">
+                <openmrs:message code="PatientDashboard.backToPatientDashboard"/>
+            </a>
+            <c:if test="${param.visitId != null}">
+                <input type="hidden" name="visitId" value="${param.visitId}"/>
+            </c:if>
+            <c:if test="${param.patientId != null}">
+                <input type="hidden" name="patientId" value="${param.patientId}"/>
+            </c:if>
+            <br/><br/>
+        </c:if>
+        <c:if test="${locationConflict}">
+            <c:if test="${visitEnded}">
+                <h3>This visit has already ended, so you will not be able to save any changes</h3>
+            </c:if>
+            <c:if test="${!visitEnded}">
+                <h3>This visit does not belong to your location, so you will not be able to save any changes</h3>
+            </c:if>
+        </c:if>
+    <b class="boxHeader"><openmrs:message code="Visit.details"/></b>
+    <div class="box">
 
-	<c:if test="${visit.visitId != null}">
-		<div style="float: right">
-			<c:if test="${visit.stopDatetime == null && !locationConflict}">
-		        <openmrs:hasPrivilege privilege="Edit Visits">
-					<input type="button" value="<openmrs:message code="Visit.end"/>" onclick="javascript:$j('#endvisit-dialogue').dialog('open');	" /> 
-				</openmrs:hasPrivilege>
-			</c:if>
-		
-			<openmrs:hasPrivilege privilege="Delete Visits">
-				<c:if test="${visit.voided == false}">
-					<c:set var="canDelete" value="${ true }"/>
-					<input type="button" value='<openmrs:message code="general.void"/>' onclick="javascript:$j('#delete-dialog').dialog('open')"/>
-				</c:if>
-			</openmrs:hasPrivilege>
-		
-			<openmrs:hasPrivilege privilege="Purge Visits">
-				<c:set var="canPurge" value="${ true }"/>
-				<input type="button" value='<openmrs:message code="general.purge"/>' onclick="javascript:$j('#purge-dialog').dialog('open')" 
-				<c:if test="${!canPurgeVisit}"> disabled="disabled" title="<openmrs:message code="Visit.cannotPurgeVisitWithEncounters"/>"</c:if> />
-			</openmrs:hasPrivilege>
-		</div>
-	</c:if>
+        <c:if test="${visit.visitId != null}">
+            <div style="float: right">
+                <c:if test="${visit.stopDatetime == null && !locationConflict}">
+                    <openmrs:hasPrivilege privilege="Edit Visits">
+                        <input type="button" value="<openmrs:message code="Visit.end"/>" onclick="javascript:$j('#endvisit-dialogue').dialog('open');	" />
+                    </openmrs:hasPrivilege>
+                </c:if>
 
-	<table class="left-aligned-th" cellpadding="3" cellspacing="3">
-		<tr>
-			<th>
-				<openmrs:message code="general.patient"/><c:if test="${visit.visitId == null}"><span class="required"> *</span></c:if>
-			</th>
-			<td>
-				<c:choose>
-					<c:when test="${visit.visitId == null}">
-					<spring:bind path="patient">
-						<openmrs_tag:patientField formFieldName="${status.expression}" initialValue="${status.value}" />
-						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-					</spring:bind>
-					</c:when>
-					<c:otherwise>${visit.patient.personName}</c:otherwise>
-				</c:choose>
-			</td>
-		</tr>
-		<tr>
-			<th><openmrs:message code="Visit.visitType"/><span class="required"> *</span></th>
-			<td>
-			<spring:bind path="visitType">
-			<c:set var="groupOpen" value="false" />
-				<select name="${status.expression}">
-				   <option value=""></option>
-				<c:forEach items="${visitTypes}" var="visitType">
-				<c:if test="${visitType.retired && !groupOpen}">
-					<optgroup label="<openmrs:message code="Visit.type.retired"/>">
-					<c:set var="groupOpen" value="true" />
-				</c:if>
-					<option value="${visitType.visitTypeId}" <c:if test="${visitType.visitTypeId == status.value}">selected="selected"</c:if>>
-						${visitType.name}
-					</option>
-				</c:forEach>
-				<c:if test="${groupOpen}">
-					</optgroup>
-					</c:if>
-				</select>
-			<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-			</spring:bind>
-			</td>
-		</tr>
-		<tr>
-			<th><openmrs:message code="Visit.startDatetime"/><span class="required"> *</span></th>
-			<td>
-				<spring:bind path="startDatetime">
-				<input type="text" name="${status.expression}" size="20" value="${status.value}" onClick="showDateTimePicker(this)" />
-				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-				</spring:bind>
-			</td>
-		</tr>
-		<tr>
-			<th><openmrs:message code="Visit.stopDatetime"/></th>
-			<td>
-				<spring:bind path="stopDatetime">
-				<input type="text" name="${status.expression}" size="20" value="${status.value}" onClick="showDateTimePicker(this)" />
-				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-				</spring:bind>
-			</td>
-		</tr>
-		<tr>
-			<th><openmrs:message code="Visit.location"/></th>
-			<td>
-				<openmrs:hasPrivilege privilege="Edit_Locations">
-				    <spring:bind path="location">
-                        <openmrs_tag:locationField formFieldName="${status.expression}" initialValue="${status.value}"/>
+                <openmrs:hasPrivilege privilege="Delete Visits">
+                    <c:if test="${visit.voided == false}">
+                        <c:set var="canDelete" value="${ true }"/>
+                        <input type="button" value='<openmrs:message code="general.void"/>' onclick="javascript:$j('#delete-dialog').dialog('open')"/>
+                    </c:if>
+                </openmrs:hasPrivilege>
+
+                <openmrs:hasPrivilege privilege="Purge Visits">
+                    <c:set var="canPurge" value="${ true }"/>
+                    <input type="button" value='<openmrs:message code="general.purge"/>' onclick="javascript:$j('#purge-dialog').dialog('open')"
+                    <c:if test="${!canPurgeVisit}"> disabled="disabled" title="<openmrs:message code="Visit.cannotPurgeVisitWithEncounters"/>"</c:if> />
+                </openmrs:hasPrivilege>
+            </div>
+        </c:if>
+
+        <table class="left-aligned-th" cellpadding="3" cellspacing="3">
+            <tr>
+                <th>
+                    <openmrs:message code="general.patient"/><c:if test="${visit.visitId == null}"><span class="required"> *</span></c:if>
+                </th>
+                <td>
+                    <c:choose>
+                        <c:when test="${visit.visitId == null}">
+                        <spring:bind path="patient">
+                            <openmrs_tag:patientField formFieldName="${status.expression}" initialValue="${status.value}" />
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                        </c:when>
+                        <c:otherwise>${visit.patient.personName}</c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+            <tr>
+                <th><openmrs:message code="Visit.visitType"/><span class="required"> *</span></th>
+                <td>
+                <c:if test="${!locationConflict}">
+                    <spring:bind path="visitType">
+                    <c:set var="groupOpen" value="false" />
+                        <select name="${status.expression}">
+                           <option value=""></option>
+                        <c:forEach items="${visitTypes}" var="visitType">
+                        <c:if test="${visitType.retired && !groupOpen}">
+                            <optgroup label="<openmrs:message code="Visit.type.retired"/>">
+                            <c:set var="groupOpen" value="true" />
+                        </c:if>
+                            <option value="${visitType.visitTypeId}" <c:if test="${visitType.visitTypeId == status.value}">selected="selected"</c:if>>
+                                ${visitType.name}
+                            </option>
+                        </c:forEach>
+                        <c:if test="${groupOpen}">
+                            </optgroup>
+                            </c:if>
+                        </select>
+                    <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                    </spring:bind>
+                </c:if>
+                <c:if test="${locationConflict}">
+                    <spring:bind path="visitType">
+                        <input type="hidden" name="${status.expression}" value="${status.value}"/>
                         <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
                     </spring:bind>
-                </openmrs:hasPrivilege>
-                <openmrs:hasPrivilege privilege="Edit_Locations" inverse="true">
-                    <c:if test="${visit.location != null}">${visit.location}</c:if>
-                </openmrs:hasPrivilege>
-			</td>
-		</tr>
-		<tr>
-			<th><openmrs:message code="Visit.indication"/></th>
-			<td>
-				<spring:bind path="indication">
-				<openmrs_tag:conceptField formFieldName="${status.expression}" formFieldId="conceptId" initialValue="${status.value}" />
-				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
-				</spring:bind>
-			</td>
-		</tr>
-		<spring:bind path="activeAttributes">
-			<c:if test="${status.error}">
-				<tr>
-					<th></th>
-					<td>
-						<span class="error">
-							<c:forEach var="err" items="${status.errorMessages}">
-								${ err }<br/>
-							</c:forEach>
-						</span>
-					</td>
-				</tr>
-			</c:if>
-		</spring:bind>
-		<c:forEach var="attrType" items="${ attributeTypes }">
-			<openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ visit }" formFieldNamePrefix="attribute.${ attrType.id }"/>
-		</c:forEach>
-		<c:if test="${visit.visitId != null}">
-		<c:if test="${visit.creator != null}">
-		<tr>
-			<th><openmrs:message code="general.createdBy" /></th>
-			<td>
-				${visit.creator.personName} - <openmrs:formatDate date="${visit.dateCreated}" type="long" />
-			</td>
-		</tr>
-		</c:if>
-		<c:if test="${visit.changedBy != null}">
-		<tr>
-			<th><openmrs:message code="general.changedBy" /></th>
-			<td>
-				${visit.changedBy.personName} - <openmrs:formatDate date="${visit.dateChanged}" type="long" />
-			</td>
-		</tr>
-		</c:if>
-		</c:if>
-</table>	
-</div>
+                    <c:if test="${visit.visitType != null}">${visit.visitType.name}</c:if>
+                </c:if>
+                </td>
+            </tr>
+            <tr>
+                <th><openmrs:message code="Visit.startDatetime"/><span class="required"> *</span></th>
+                <td>
+                    <c:if test="${!locationConflict}">
+                        <spring:bind path="startDatetime">
+                            <input type="text" name="${status.expression}" size="20" value="${status.value}" onClick="showDateTimePicker(this)" />
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                    </c:if>
+                    <c:if test="${locationConflict}">
+                        <spring:bind path="startDatetime">
+                            <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                        <c:if test="${visit.startDatetime != null}">${visit.startDatetime}</c:if>
+                    </c:if>
+                </td>
+            </tr>
+            <tr>
+                <th><openmrs:message code="Visit.stopDatetime"/></th>
+                <td>
+                    <c:if test="${!locationConflict}">
+                        <spring:bind path="stopDatetime">
+                            <input type="text" name="${status.expression}" size="20" value="${status.value}" onClick="showDateTimePicker(this)" />
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                    </c:if>
+                    <c:if test="${locationConflict}">
+                        <spring:bind path="stopDatetime">
+                            <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                        <c:if test="${visit.stopDatetime != null}"><openmrs:message code="${visit.stopDatetime}"/></c:if>
+                    </c:if>
+                </td>
+            </tr>
+            <tr>
+                <th><openmrs:message code="Visit.location"/></th>
+                <td>
+                    <c:if test="${!locationConflict}">
+                        <spring:bind path="location">
+                            <openmrs_tag:locationField formFieldName="${status.expression}" initialValue="${status.value}"/>
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                    </c:if>
+                    <c:if test="${locationConflict}">
+                        <spring:bind path="location">
+                            <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                        <c:if test="${visit.location != null}">${visit.location}</c:if>
+                    </c:if>
+                </td>
+            </tr>
+            <tr>
+                <th><openmrs:message code="Visit.indication"/></th>
+                <td>
+                    <c:if test="${!locationConflict}">
+                        <spring:bind path="indication">
+                            <openmrs_tag:conceptField formFieldName="${status.expression}" formFieldId="conceptId" initialValue="${status.value}" />
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                    </c:if>
+                    <c:if test="${locationConflict}">
+                        <spring:bind path="indication">
+                            <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                            <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
+                        </spring:bind>
+                        <c:if test="${visit.indication != null}">${visit.indication}</c:if>
+                        <c:if test="${visit.indication == null}"></c:if>
+                    </c:if>
+                </td>
+            </tr>
+            <spring:bind path="activeAttributes">
+                <c:if test="${status.error}">
+                    <tr>
+                        <th></th>
+                        <td>
+                            <span class="error">
+                                <c:forEach var="err" items="${status.errorMessages}">
+                                    ${ err }<br/>
+                                </c:forEach>
+                            </span>
+                        </td>
+                    </tr>
+                </c:if>
+            </spring:bind>
 
-<br/>
+            <c:forEach var="attrType" items="${ attributeTypes }">
+                <c:if test="${!locationConflict}">
+                    <openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ visit }" formFieldNamePrefix="attribute.${ attrType.id }"/>
+                </c:if>
+                <c:if test="${locationConflict}">
+                    <tr>
+                        <th>
+                            ${ attrType.name }
+                        </th>
+                        <td>
+                            <c:forEach var="activeAttr" items="${ activeAttrs }">
 
-<b class="boxHeader"><openmrs:message code="Visit.encounters"/></b>
-<div class="box">
-	<table id="encountersTable" cellpadding="3" cellspacing="3">
-		<tr>
-			<th><openmrs:message code="Encounter.datetime"/></th>
-			<th><openmrs:message code="Encounter.type"/></th>
-			<th><openmrs:message code="Encounter.location"/></th>
-			<th><openmrs:message code="Encounter.provider"/></th>
-			<th></th>
-		</tr>
-		<c:forEach items="${visitEncounters}" var="enc" varStatus="encStatus">
-		<tr id="encounter-${enc.encounterId}" style='background-color: whitesmoke'>
-			<td><openmrs:formatDate date="${enc.encounterDatetime}" type="small" /></td>
-			<td><openmrs:format encounterType="${enc.encounterType}" /></td>
-			<td><openmrs:format location="${enc.location}" /></td>
-			<td><openmrs:format person="${enc.provider}" /></td>
-			<td class="removeButtonColumn">
-				<input type="button" value='<openmrs:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
-				<input type="hidden" name="encounterIds" value="${enc.encounterId}" />
-			</td>
-		</tr>
-		</c:forEach>
-		<tr id="newEncounterRow" style="display:none;">
-			<td colspan="4">
-				<%-- make sure the text field is wide enough to show the placeholder message --%>
-				<input type="text" id="visitEncounters[x]-display" size="62" />
-				<input type="hidden" id="visitEncounters[x]" name="encounterIds" />
-			</td>
-			<td class="removeButtonColumn">
-				<input type="button" value='<openmrs:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
-			</td>
-		</tr>
-	</table>
-	<input type="button" value='<openmrs:message code="Visit.addEncounter"/>' class="smallButton" onclick='addEncounter()' />
-</div>
+                                <c:if test="${ activeAttr.attributeType == attrType }">
+                                    <openmrs:message code="${ activeAttr.valueReference }"/>
+                                </c:if>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </c:if>
+            </c:forEach>
+            <c:if test="${visit.visitId != null}">
+                <c:if test="${visit.creator != null}">
+                <tr>
+                    <th><openmrs:message code="general.createdBy" /></th>
+                    <td>
+                        ${visit.creator.personName} - <openmrs:formatDate date="${visit.dateCreated}" type="long" />
+                    </td>
+                </tr>
+                </c:if>
+                <c:if test="${visit.changedBy != null}">
+                <tr>
+                    <th><openmrs:message code="general.changedBy" /></th>
+                    <td>
+                        ${visit.changedBy.personName} - <openmrs:formatDate date="${visit.dateChanged}" type="long" />
+                    </td>
+                </tr>
+                </c:if>
+            </c:if>
+    </table>
+    </div>
 
-<br/>
+    <br/>
 
-<c:if test="${!locationConflict}">
-<input type="submit" value='<openmrs:message code="general.save" />' /></c:if>
-</td>
-<c:set var="cancelUrl" value="${pageContext.request.contextPath}/admin" scope="page"></c:set>
-<c:if test="${not empty param.patientId}">
-	<c:set var="cancelUrl" value="${pageContext.request.contextPath}/patientDashboard.form?patientId=${param.patientId}" />
-</c:if>
-<input type="button" style="margin-left: 15px" value='<openmrs:message code="general.cancel" />' onclick='javascript:window.location="${cancelUrl}"' />
+    <b class="boxHeader"><openmrs:message code="Visit.encounters"/></b>
+    <div class="box">
+        <table id="encountersTable" cellpadding="3" cellspacing="3">
+            <tr>
+                <th><openmrs:message code="Encounter.datetime"/></th>
+                <th><openmrs:message code="Encounter.type"/></th>
+                <th><openmrs:message code="Encounter.location"/></th>
+                <th><openmrs:message code="Encounter.provider"/></th>
+                <th></th>
+            </tr>
+            <c:forEach items="${visitEncounters}" var="enc" varStatus="encStatus">
+            <tr id="encounter-${enc.encounterId}" style='background-color: whitesmoke'>
+                <td><openmrs:formatDate date="${enc.encounterDatetime}" type="small" /></td>
+                <td><openmrs:format encounterType="${enc.encounterType}" /></td>
+                <td><openmrs:format location="${enc.location}" /></td>
+                <td><openmrs:format person="${enc.provider}" /></td>
+                <td class="removeButtonColumn">
+                    <c:if test="${!locationConflict}">
+                        <input type="button" value='<openmrs:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
+                    </c:if>
+                    <input type="hidden" name="encounterIds" value="${enc.encounterId}" />
+                </td>
+            </tr>
+            </c:forEach>
+            <tr id="newEncounterRow" style="display:none;">
+                <td colspan="4">
+                    <%-- make sure the text field is wide enough to show the placeholder message --%>
+                    <input type="text" id="visitEncounters[x]-display" size="62" />
+                    <input type="hidden" id="visitEncounters[x]" name="encounterIds" />
+                </td>
+                <td class="removeButtonColumn">
+                    <input type="button" value='<openmrs:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
+                </td>
+            </tr>
+        </table>
+        <c:if test="${!locationConflict}">
+            <input type="button" value='<openmrs:message code="Visit.addEncounter"/>' class="smallButton" onclick='addEncounter()' />
+        </c:if>
+    </div>
+
+    <br/>
+
+    <c:if test="${!locationConflict}">
+        <input type="submit" value='<openmrs:message code="general.save" />' />
+    </c:if>
+    </td>
+    <c:set var="cancelUrl" value="${pageContext.request.contextPath}/admin" scope="page"></c:set>
+    <c:if test="${not empty param.patientId}">
+        <c:set var="cancelUrl" value="${pageContext.request.contextPath}/patientDashboard.form?patientId=${param.patientId}" />
+    </c:if>
+    <input type="button" style="margin-left: 15px" value='<openmrs:message code="general.cancel" />' onclick='javascript:window.location="${cancelUrl}"' />
 
 </form:form>
 

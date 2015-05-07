@@ -443,7 +443,7 @@
                                             <label id="projection" style="display:none">EPSG:3857</label>
                                             <!-- <label id="mouse-position"></label>
                                             <label id="precision"  style="display:none">12</label> -->
-                                            <h3>Please indicate where the patient lives by clicking on map with the mouse</h3>
+                                            <h3>Please indicate where the patient lives by clicking on the map below with the mouse</h3>
                                             <div id="map" class="map"></div>
             								<div id="popup"></div>
             							<link rel="stylesheet" href="http://openlayers.org/en/v3.0.0/css/ol.css" type="text/css">
@@ -457,6 +457,7 @@
 			    <!-- The following line of code is completely responsible for rendering of the patient address
 			    according to the template provided in the settings -->
 				<openmrs:portlet url="addressLayout" id="addressPortlet" size="full" parameters="layoutShowTable=true|layoutShowExtended=false" />
+
 
 				<script type="text/javascript">
                                                                 ////////////////////////////////////////////////////////////////////////////////////
@@ -575,8 +576,8 @@
                                                                 }, false);*/
 
                             									var c = [0,0];
-                            									document.getElementById('personAddress.latitude').disabled = true;
-                            									document.getElementById('personAddress.longitude').disabled = true;
+                            									document.getElementById('personAddress.latitude').readOnly = true;
+                            									document.getElementById('personAddress.longitude').readOnly = true;
                             									//Here we should also check whether the address ids are in addresses[1].latitude format as opposed to personAddress.latitude format
                             									if (document.getElementById('personAddress.latitude') != null && document.getElementById('personAddress.longitude') != null)
                             									{
@@ -643,7 +644,7 @@
                                                                                             src: '../../images/openmrs_logo_tiny.png'
                                                                                         })),
                                                                                         text : new ol.style.Text({
-                                                                                            font : '14px Calibri,sans-serif,bold',
+                                                                                            font : '20px Calibri,sans-serif,bold',
                                                                                             text : text,
                                                                                             fill : new ol.style.Fill({
                                                                                                 color : '#000'

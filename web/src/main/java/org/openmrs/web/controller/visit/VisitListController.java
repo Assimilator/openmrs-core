@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.util.Logger;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.controller.PortletControllerUtil;
 import org.openmrs.web.controller.bean.DatatableRequest;
@@ -85,15 +86,23 @@ public class VisitListController {
 		    "encounterProviders", "visitReferredFrom", "encounterLocation", "visitReferredTo", "encounterEnterer",
 		    "formViewURL");
 		
+		int oldVisitID = 0;
+		int newVisitID = 0;
+		Location userLoc = Context.getLocationService().getLocation(
+		    Integer.parseInt(Context.getAuthenticatedUser().getUserProperties().get(
+		        OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION)));
+		
 		for (Encounter encounter : encounters) {
 			Map<String, String> row = new HashMap<String, String>();
+			oldVisitID = newVisitID;
 			
 			if (encounter.getVisit() != null) {
 				Visit visit = encounter.getVisit();
+				newVisitID = visit.getVisitId();
 				Set<VisitAttribute> attributeSet = visit.getAttributes();
 				if (!attributeSet.isEmpty()) {
 					for (VisitAttribute object : attributeSet) {
-						if (object.getAttributeType().getId() == 2) {//Checking if TypeId belongs to the referral TypeId
+						if (object.getAttributeType().getId() == 2 && oldVisitID != newVisitID && !encounter.isVoided()) {//Checking if TypeId belongs to the referral TypeId, also making sure that only the first row in a visit has the referral in displayed
 							row.put("visitReferredFrom", object.getValue().toString()); //Here we add visit ReferredFrom data
 						}
 					}
@@ -114,7 +123,30 @@ public class VisitListController {
 					row.put("visitIndication", visit.getIndication().getName().getName());
 				}
 				
-				Object[] visitEncounters = visit.getEncounters().toArray();
+				//Originally this code was supposed to handle the drawing of encounters
+				//Now, however, since we do not display voided encounters,
+				//We have to decrement encounter counter by the amount of voided encounters and then
+				// display the non-voided encounter set accordingly
+				Set<Encounter> prepVisitEncounters = visit.getEncounters();
+				
+				//Here we count non-voided visits
+				int counter = 0;
+				for (Encounter enc : prepVisitEncounters) {
+					if (!enc.isVoided()) {
+						counter++;
+					}
+				}
+				//Initializing right-size array
+				Object[] visitEncounters = new Object[counter];
+				counter = 0;
+				//Here we will use a for loop to get rid of the voided visits in the array.
+				for (Encounter enc : prepVisitEncounters) {
+					if (!enc.isVoided()) {
+						visitEncounters[counter] = enc;
+						counter++;
+					}
+				}
+				
 				if (visitEncounters.length > 0) {
 					if (encounter.equals(visitEncounters[0])) {
 						row.put("firstInVisit", Boolean.TRUE.toString());
@@ -128,7 +160,7 @@ public class VisitListController {
 				}
 			}
 			
-			if (encounter.getId() != null) { //If it is not mocked encounter
+			if (encounter.getId() != null && !encounter.isVoided()) { //If it is not mocked encounter and not voided
 				row.put("encounterId", encounter.getId().toString());
 				row.put("encounterDate", Context.getDateFormat().format(encounter.getEncounterDatetime()));
 				row.put("encounterType", encounter.getEncounterType().getName());
@@ -136,7 +168,22 @@ public class VisitListController {
 				row.put("encounterLocation", (encounter.getLocation() != null) ? encounter.getLocation().getName() : "");
 				row.put("encounterEnterer", (encounter.getCreator() != null) ? encounter.getCreator().getPersonName()
 				        .toString() : "");
-				row.put("formViewURL", getViewFormURL(request, formToViewUrlMap, formToEditUrlMap, encounter));
+				
+				boolean flag = false;
+				if (encounter.getLocation() != null) {
+					if (!encounter.getLocation().equals(userLoc)) {
+						flag = true;
+					}
+				} else {
+					flag = true;
+				}
+				
+				//Here we check whether the encounter has happened in the same location as the user or whether it is a SuperUser
+				if (!flag || Context.getAuthenticatedUser().isSuperUser()) {
+					row.put("formViewURL", getViewFormURL(request, formToViewUrlMap, formToEditUrlMap, encounter));
+				} else {
+					row.put("formViewURL", "False");
+				}
 				
 				//Getting referrals to some other clinics
 				Set<Obs> observationSet = encounter.getAllObs();
@@ -144,7 +191,9 @@ public class VisitListController {
 					String spacer = " ";
 					String referralsOut = "";
 					for (Obs obj : observationSet) {
-						if (obj.getConcept().getId() == 1272) {//Checking if TypeId belongs to the referral TypeId
+						if (obj.getConcept().getId() == 1272
+						        && Context.getConceptService().getConcept(obj.getValueCoded().getConceptId())
+						                .getConceptClass().getId() == 30) {//Checking if TypeId belongs to the referral TypeId
 							referralsOut += spacer
 							        + Context.getConceptService().getConcept(obj.getValueCoded().getConceptId()).getName();//adding each stored referral to the display string
 							spacer = ", ";

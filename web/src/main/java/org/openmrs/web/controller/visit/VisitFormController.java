@@ -15,6 +15,7 @@ package org.openmrs.web.controller.visit;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.lang.String;
@@ -99,6 +100,15 @@ public class VisitFormController {
 			visit.setLocation(Context.getLocationService().getLocation(
 			    Integer.parseInt(user.getUserProperties().get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION))));
 		}
+		
+		if (visit.getStopDatetime() != null && !user.isSuperUser()) {
+			model.addAttribute("visitEnded", true);
+			model.addAttribute("locationConflict", true);
+		} else {
+			model.addAttribute("visitEnded", false);
+		}
+		
+		model.addAttribute("activeAttrs", visit.getActiveAttributes());
 		
 		addEncounterAndObservationCounts(visit, null, model);
 		return VISIT_FORM;
