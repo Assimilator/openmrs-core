@@ -22,11 +22,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.util.OpenmrsConstants;
 
 public class DWREncounterService {
 	
@@ -117,7 +119,13 @@ public class DWREncounterService {
 			} else {
 				objectList = new Vector<Object>(encs.size());
 				for (Encounter e : encs) {
-					objectList.add(new EncounterListItem(e));
+					//Here we implement restriction by location if user searching is not a superUser
+					User user = Context.getAuthenticatedUser();
+					Location userLoc = Context.getLocationService().getLocation(
+					    Integer.parseInt(Context.getAuthenticatedUser().getUserProperties().get(
+					        OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION)));
+					if (user.isSuperUser() || e.getLocation().equals(userLoc))
+						objectList.add(new EncounterListItem(e));
 				}
 			}
 		}

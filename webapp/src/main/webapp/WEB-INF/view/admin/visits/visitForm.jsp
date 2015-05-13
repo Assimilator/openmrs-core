@@ -267,13 +267,13 @@ $j(document).ready( function() {
             <tr>
                 <th><openmrs:message code="Visit.location"/></th>
                 <td>
-                    <c:if test="${!locationConflict}">
+                    <c:if test="${super}">
                         <spring:bind path="location">
                             <openmrs_tag:locationField formFieldName="${status.expression}" initialValue="${status.value}"/>
                             <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
                         </spring:bind>
                     </c:if>
-                    <c:if test="${locationConflict}">
+                    <c:if test="${!super}">
                         <spring:bind path="location">
                             <input type="hidden" name="${status.expression}" value="${status.value}"/>
                             <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
@@ -297,7 +297,6 @@ $j(document).ready( function() {
                             <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
                         </spring:bind>
                         <c:if test="${visit.indication != null}">${visit.indication}</c:if>
-                        <c:if test="${visit.indication == null}"></c:if>
                     </c:if>
                 </td>
             </tr>
@@ -323,7 +322,7 @@ $j(document).ready( function() {
                 <c:if test="${locationConflict}">
                     <tr>
                         <th>
-                            ${ attrType.name }
+                            ${ attrType.name }<c:if test="${attrType.minOccurs != null && attrType.minOccurs > 0}"> <span class="required"> *</span></c:if>
                         </th>
                         <td>
                             <c:forEach var="activeAttr" items="${ activeAttrs }">
@@ -359,7 +358,7 @@ $j(document).ready( function() {
 
     <br/>
 
-    <b class="boxHeader"><openmrs:message code="Visit.encounters"/></b>
+    <b class="boxHeader"><openmrs:message code="Existing Encounters"/></b>
     <div class="box">
         <table id="encountersTable" cellpadding="3" cellspacing="3">
             <tr>
@@ -395,7 +394,7 @@ $j(document).ready( function() {
             </tr>
         </table>
         <c:if test="${!locationConflict}">
-            <input type="button" value='<openmrs:message code="Visit.addEncounter"/>' class="smallButton" onclick='addEncounter()' />
+            <input type="button" value='<openmrs:message code="Add Existing Encounter"/>' class="smallButton" onclick='addEncounter()' />
         </c:if>
     </div>
 

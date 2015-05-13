@@ -446,9 +446,12 @@
                                             <h3>Please indicate where the patient lives by clicking on the map below with the mouse</h3>
                                             <div id="map" class="map"></div>
             								<div id="popup"></div>
-            							<link rel="stylesheet" href="http://openlayers.org/en/v3.0.0/css/ol.css" type="text/css">
-                                        <script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>
-            							<!--<script src="./Marker Example/jquery.min.js" type="text/javascript"></script>
+            							<openmrs:htmlInclude file="/scripts/ol.js" />
+            							<openmrs:htmlInclude file="/scripts/ol.css" />
+                                        <!--
+            							<link rel="stylesheet" href="./Marker Example/ol.css" type="text/css">
+            							<script src="./Marker Example/ol.js" type="text/javascript"></script>
+            							<script src="./Marker Example/jquery.min.js" type="text/javascript"></script>
             							<script src="./Marker Example/bootstrap.js" type="text/javascript"></script>
             							<link rel="stylesheet" href="./Marker Example/bootstrap.css" type="text/css">-->
 

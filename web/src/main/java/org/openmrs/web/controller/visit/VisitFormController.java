@@ -88,6 +88,10 @@ public class VisitFormController {
 			visit.setPatient(Context.getPatientService().getPatient(patientId));
 		
 		User user = Context.getAuthenticatedUser();
+		if (user.isSuperUser()) {
+			model.addAttribute("super", true);
+		}
+		
 		if (visit.getLocation() != null) {
 			Location testLoc = Context.getLocationService().getLocation(
 			    Integer.parseInt(user.getUserProperties().get(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION)));
@@ -109,6 +113,8 @@ public class VisitFormController {
 		}
 		
 		model.addAttribute("activeAttrs", visit.getActiveAttributes());
+		//VisitAttributeType va = new VisitAttributeType();
+		//va.getMinOccurs();
 		
 		addEncounterAndObservationCounts(visit, null, model);
 		return VISIT_FORM;

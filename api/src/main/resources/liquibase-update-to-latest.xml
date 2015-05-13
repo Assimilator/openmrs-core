@@ -6529,7 +6529,7 @@
 		</addColumn>
 	</changeSet>
 
-    <changeSet id="20150423-Landmark" author="Serhei Luchianov">
+    <changeSet id="20150423-Landmark" author="Serghei Luchianov">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="landmark"/>
@@ -6559,5 +6559,21 @@
             <column name="retired_reason" type="varchar(255)" defaultValue="null"/>
             <column name="uuid" type="char(38)" />
         </createTable>
+    </changeSet>
+
+    <changeSet id="20150611-OptOut" author="Serghei Luchianov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="person_address" columnName="optOut"/>
+            </not>
+        </preConditions>
+        <comment>
+            Create optout columns
+        </comment>
+        <addColumn tableName="person_address">
+            <column name="optOut" type="tinyint" defaultValueNumeric="0"/>
+            <column name="optOutReason" type="varchar(50)" />
+            <column name="optOutComment" type="varchar(255)" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
