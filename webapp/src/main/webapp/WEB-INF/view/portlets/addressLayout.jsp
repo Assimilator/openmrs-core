@@ -232,7 +232,9 @@
                                         <c:forEach items="${model.optOutReasons}" var="reason">
                                             <option value="${reason}" <c:if test="${reason == status.value}">selected</c:if>>
                                                 <c:if test="${reason == 'NO_ADDRESS'}">NO ADDRESS</c:if>
-                                                <c:if test="${reason != 'NO_ADDRESS'}">${reason}</c:if>
+												<c:if test="${reason == 'NOT_PRESENT_ON_MAP'}">PATIENT DOES NOT LIVE WITHIN MAP AREA</c:if>
+
+                                                <c:if test="${reason != 'NO_ADDRESS' && reason != 'NOT_PRESENT_ON_MAP'}">${reason}</c:if>
                                             </option>
                                         </c:forEach>
                                     </select>
